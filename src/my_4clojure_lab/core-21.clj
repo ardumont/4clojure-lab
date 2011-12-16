@@ -11,9 +11,7 @@
 
 (defn mnth "my nth method"
   [s n]
-  (first
-   (filter truthy
-           (map #(when (= %1 n) %2) (range 0 (inc n)) s))))
+  (first (drop n s)))
 
 (fact
   (mnth '(4 5 6 7) 2) => 6
