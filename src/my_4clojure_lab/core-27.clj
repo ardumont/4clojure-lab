@@ -10,11 +10,16 @@
 
 (defn pal? "My range function implementation - start inclusive, end exclusive"
   [s]
-  )
+  (= (seq s) (reverse s)))
 
 (fact
   (pal? [1 2 3]) => falsey
   (pal? [1 2 1]) => truthy)
 
+(fact
+  (pal? "racecar") => truthy
+  (pal? [:foo :bar :foo]) => truthy
+  (pal? '(1 1 3 3 1 1))  => truthy
+  (pal? '(:a :b :c))  => falsey)
 
 (println "--------- END pal  ----------" (java.util.Date.))
