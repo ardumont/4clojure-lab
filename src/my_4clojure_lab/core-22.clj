@@ -10,7 +10,8 @@
 (println "--------- BEGIN 34  ----------" (java.util.Date.))
 
 (defn method-22 "Count the total number of elements in a sequence"
-  [s] )
+  [s]
+  (apply + (map #(when %1 1) s)))
 
 (fact
   (method-22 '(1 2 3 3 1)) => 5
