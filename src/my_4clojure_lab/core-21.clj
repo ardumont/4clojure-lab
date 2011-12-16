@@ -2,12 +2,11 @@
   my-4clojure-lab.core-21
   (:use clojure.repl)
   (:use clojure.java.javadoc)
-  (:use [midje.sweet])
-  (:use [clojure.pprint :only [pp pprint]]))
-
-;; Write a function which returns the Nth element from a sequence.
+  (:use [midje.sweet]))
 
 (println "--------- BEGIN 21  ----------" (java.util.Date.))
+
+;; Write a function which returns the Nth element from a sequence.
 
 (defn mnth "my nth method"
   [s n]
