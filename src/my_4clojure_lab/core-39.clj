@@ -13,7 +13,7 @@
 
 (defn my-interleave "My interleave implementation"
   [s0 s1]
-  (mapcat #(conj [] %1 %2) s0 s1))
+  (mapcat list s0 s1))
 
 (fact 
   (my-interleave [1 2 3] [:a :b :c]) => '(1 :a 2 :b 3 :c)
