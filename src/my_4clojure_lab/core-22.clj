@@ -11,7 +11,7 @@
 
 (defn method-22 "Count the total number of elements in a sequence"
   [s]
-  (apply + (map #(when %1 1) s)))
+  (reduce (fn [c e] (inc c)) 0 s))
 
 (fact
   (method-22 '(1 2 3 3 1)) => 5
