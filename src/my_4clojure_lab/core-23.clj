@@ -10,7 +10,7 @@
 (println "--------- BEGIN 23  ----------" (java.util.Date.))
 
 (defn rev "Reverse"
-  [s])
+  [s] (reduce #(cons %2 %1) [] s)) 
 
 (fact
   (rev [1 2 3 4 5]) => [5 4 3 2 1]
