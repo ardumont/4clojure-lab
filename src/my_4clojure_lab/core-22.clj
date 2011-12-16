@@ -1,4 +1,4 @@
-(ns ^{:doc "http://www.4clojure.com/problem/34#prob-title"}
+(ns ^{:doc "http://www.4clojure.com/problem/22#prob-title"}
   my-4clojure-lab.core-22
   (:use clojure.repl)
   (:use clojure.java.javadoc)
@@ -7,7 +7,7 @@
 
 ;; Write a function which returns the total number of elements in a sequence.
 
-(println "--------- BEGIN 34  ----------" (java.util.Date.))
+(println "--------- BEGIN 22  ----------" (java.util.Date.))
 
 (defn method-22 "Count the total number of elements in a sequence"
   [s]
@@ -20,5 +20,5 @@
   (method-22 '(13)) => 1
   (method-22 '(:a :b :c)) => 3)
 
-(println "--------- END 34  ----------" (java.util.Date.))
+(println "--------- END 22  ----------" (java.util.Date.))
 
