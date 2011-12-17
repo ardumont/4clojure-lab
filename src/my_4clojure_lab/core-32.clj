@@ -10,7 +10,7 @@
 
 (defn dup "Duplicate each element of the sequence"
   [s]
-  (reduce concat [] (for [x s] [x x])))
+  (apply concat (for [x s] [x x])))
 
 (fact
   (dup [1 2 3]) => '(1 1 2 2 3 3)
