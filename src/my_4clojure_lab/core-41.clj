@@ -10,7 +10,7 @@
 
 (defn drop-nth "drops every nth item from a sequence."
   [s n]
-  (for [x (range 0 (count s)) :when (< 0 (rem (inc x) n))] (s x)))
+  (for [x (range (count s)) :when (< 0 (rem (inc x) n))] (s x)))
 
 (fact
   (drop-nth [1 2 3 4 5 6 7 8] 3)   => [1 2 4 5 7 8]
