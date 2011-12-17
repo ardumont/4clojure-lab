@@ -8,9 +8,9 @@
 
 ;; Write a function which drops every Nth item from a sequence.
 
-(defn drop-nth "drops every Nth item from a sequence."
+(defn drop-nth "drops every nth item from a sequence."
   [s n]
-  (for [x (range 1 (inc (count s))) :when (pos? (rem x n))] (s (dec x))))
+  (for [x (range 1 (inc (count s))) :when (< 0 (rem x n))] (s (dec x))))
 
 (fact
   (drop-nth [1 2 3 4 5 6 7 8] 3)   => [1 2 4 5 7 8]
@@ -18,3 +18,4 @@
   (drop-nth [1 2 3 4 5 6] 4)       => [1 2 3 5 6])
 
 (println "--------- END 41  ----------" (java.util.Date.))
+[:A :a :B][:A :a :B]
