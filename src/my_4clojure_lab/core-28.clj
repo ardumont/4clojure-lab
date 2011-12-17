@@ -11,7 +11,7 @@
 (defn my-flatten "flatten implementation"
   [s]
   (reduce
-   #(if (sequential? %2)
+   #(if (coll? %2)
       (concat % (my-flatten %2))
       (concat % [%2]))
    []
