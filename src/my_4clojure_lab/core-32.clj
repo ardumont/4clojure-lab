@@ -9,7 +9,8 @@
 ;; Write a function which duplicates each element of a sequence.
 
 (defn dup "Duplicate each element of the sequence"
-  [s])
+  [s]
+  (reduce concat [] (for [x s] [x x])))
 
 (fact
   (dup [1 2 3]) => '(1 1 2 2 3 3)
