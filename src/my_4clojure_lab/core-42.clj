@@ -10,7 +10,7 @@
 
 (defn facto "Factorial"
   [n]
-  (apply * (range 1 (inc n))))
+  (apply * n (range 2 n)))
 
 (fact 
   (facto 1) => 1
