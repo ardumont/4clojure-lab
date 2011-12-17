@@ -4,9 +4,9 @@
   (:use clojure.java.javadoc)
   (:use [midje.sweet]))
 
-;; Write a function which drops every Nth item from a sequence.
-
 (println "--------- BEGIN 41  ----------" (java.util.Date.))
+
+;; Write a function which drops every Nth item from a sequence.
 
 (defn drop-nth "drops every Nth item from a sequence."
   [s n]
