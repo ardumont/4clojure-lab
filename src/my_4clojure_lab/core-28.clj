@@ -10,12 +10,7 @@
 
 (defn my-flatten "flatten implementation"
   [s]
-  (reduce
-   #(if (coll? %2)
-      (concat % (my-flatten %2))
-      (concat % [%2]))
-   []
-   s))
+  (if (coll? s) (mapcat my-flatten s) [s]))
 
 (fact
   (my-flatten '((1 2) 3 [4 [5 6]])) => '(1 2 3 4 5 6)
