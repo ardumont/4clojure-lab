@@ -8,7 +8,7 @@
 
 ;; Palindrome detector
 
-(defn pal? "My range function implementation - start inclusive, end exclusive"
+(defn pal? "Is the sequence a palindrome?"
   [s]
   (= (seq s) (reverse s)))
 
