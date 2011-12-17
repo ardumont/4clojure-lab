@@ -6,14 +6,14 @@
 
 (println "--------- BEGIN 26  ----------" (java.util.Date.))
 
-;; Write a function which returns the Nth element from a sequence.
+;; Write a function which returns the nth element from a sequence.
 
 (defn fib "Fibonacci"
   [n] (take n
             (map first 
                  (iterate
-                  (fn [[a b]]
-                    (conj [b] (+ a b)))
+                  (fn [[ a b]]
+                    [b (+ a b)])
                   [1 1]))))
 
 (fact
