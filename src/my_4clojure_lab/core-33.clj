@@ -11,7 +11,7 @@
 
 (defn dupn "Duplicate each element of the sequence with a certain repetition"
   [s n]
-  (for [x s y (repeat n x)] y))
+  (for [x s, y (repeat n x)] y))
 
 (fact
   (dupn [1 2 3] 2) => '(1 1 2 2 3 3)
