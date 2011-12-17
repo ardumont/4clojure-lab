@@ -9,11 +9,12 @@
 ;; Write a function which returns the Nth element from a sequence.
 
 (defn fib "Fibonacci"
-  ([n] (fib 1 1 n))
-  ([x y n]
-     (if (zero? n)
-       nil
-       (concat [x] (fib y (+ x y) (dec n))))))
+  [n] (take n
+            (map first 
+                 (iterate
+                  (fn f [[a b]]
+                    (conj [b] (+ a b)))
+                  [1 1]))))
 
 (fact
   (fib 3) => '(1 1 2)
