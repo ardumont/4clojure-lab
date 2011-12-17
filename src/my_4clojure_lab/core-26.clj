@@ -9,12 +9,7 @@
 ;; Write a function which returns the nth element from a sequence.
 
 (defn fib "Fibonacci"
-  [n] (take n
-            (map first 
-                 (iterate
-                  (fn [[a b]]
-                    [b (+ a b)])
-                  [1 1]))))
+  [n] (take n (map first (iterate (fn [[a b]] [b (+ a b)]) [1 1]))))
 
 (fact
   (fib 3) => '(1 1 2)
