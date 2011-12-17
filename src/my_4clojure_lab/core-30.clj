@@ -11,7 +11,7 @@
 
 (defn rem-dup "Remove duplicate entries from a sequence"
   [s]
-  (reduce #(if (= %2 (last %)) % (conj % %2)) [] s))
+  (map first (partition-by identity s)))
 
 (fact 
   (apply str (rem-dup "Leeeeeerrroyyy")) => "Leroy"
