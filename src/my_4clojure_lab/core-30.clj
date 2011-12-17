@@ -11,7 +11,7 @@
 
 (defn rem-dup "Remove duplicate entries from a sequence"
   [s]
-  (reduce (fn [l x] (if (not= x (last l)) (conj l x) l)) [] s))
+  (reduce (fn [l x] (if (= x (last l)) l (conj l x))) [] s))
 
 (fact 
   (apply str (rem-dup "Leeeeeerrroyyy")) => "Leroy"
