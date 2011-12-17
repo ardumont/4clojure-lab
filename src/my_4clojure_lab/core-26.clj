@@ -12,7 +12,7 @@
   [n] (take n
             (map first 
                  (iterate
-                  (fn f [[a b]]
+                  (fn [[a b]]
                     (conj [b] (+ a b)))
                   [1 1]))))
 
