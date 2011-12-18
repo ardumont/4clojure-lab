@@ -10,7 +10,7 @@
 
 (defn my-zipmap "takes a vector of keys and a vector of values and constructs a map from them."
   [s l]
-  (reduce (fn [m [k v]] (assoc m k v)) {} (map (fn [k v] [k v]) s l)))
+  (reduce (fn [m [k v]] (assoc m k v)) {} (map vector s l)))
 
 (fact 
   (my-zipmap [:a :b :c] [1 2 3]) => {:a 1, :b 2, :c 3}
