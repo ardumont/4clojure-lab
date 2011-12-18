@@ -10,9 +10,7 @@
 
 (defn rotate "Rotate a sequence in either direction."
   [n s]
-  (let [p (mod n (count s))
-        sp (conj (into [] (rest s)) (first s))]
-    (if (= p 1) sp (rotate (dec p) sp))))
+  (let [p (mod n (count s))] (concat (drop p s) (take p s))))
 
 (fact 
   (rotate 2 [1 2 3 4 5]) => '(3 4 5 1 2)
