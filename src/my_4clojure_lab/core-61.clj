@@ -8,13 +8,13 @@
 
 ;; Write a function which takes a vector of keys and a vector of values and constructs a map from them.
 
-(defn construct-map "takes a vector of keys and a vector of values and constructs a map from them."
+(defn my-zipmap "takes a vector of keys and a vector of values and constructs a map from them."
   [s l]
   (reduce (fn [m [k v]] (assoc m k v)) {} (map (fn [k v] [k v]) s l)))
 
 (fact 
-  (construct-map [:a :b :c] [1 2 3]) => {:a 1, :b 2, :c 3}
-  (construct-map [1 2 3 4] ["one" "two" "three"]) => {1 "one", 2 "two", 3 "three"}
-  (construct-map [:foo :bar] ["foo" "bar" "baz"]) => {:foo "foo", :bar "bar"})
+  (my-zipmap [:a :b :c] [1 2 3]) => {:a 1, :b 2, :c 3}
+  (my-zipmap [1 2 3 4] ["one" "two" "three"]) => {1 "one", 2 "two", 3 "three"}
+  (my-zipmap [:foo :bar] ["foo" "bar" "baz"]) => {:foo "foo", :bar "bar"})
 
 (println "--------- END 61  ----------" (java.util.Date.))
