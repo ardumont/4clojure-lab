@@ -12,9 +12,7 @@
   [n s]
   (let [p (mod n (count s))
         sp (conj (into [] (rest s)) (first s))]
-    (if (= p 1)
-      sp
-      (rotate (dec n) sp))))
+    (if (= p 1) sp (rotate (dec p) sp))))
 
 (fact 
   (rotate 2 [1 2 3 4 5]) => '(3 4 5 1 2)
