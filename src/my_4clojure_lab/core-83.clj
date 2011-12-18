@@ -13,7 +13,7 @@
 
 (defn half-truth "Takes a variable number of booleans. Returns true if some of the parameters are true, else return false."
   [& xv]
-  (let [n (count (filter true? xv))] (not (or (zero? n) (= (count xv) n)))))
+  (= 2 (count (group-by true? xv))))
 
 (fact 
   (half-truth false false) => false
