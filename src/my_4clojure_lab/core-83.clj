@@ -14,9 +14,7 @@
 (defn half-truth "Takes a variable number of booleans. "
   [& xv]
   (let [n (count (filter truthy xv))]
-    (cond (zero? n) false
-          (= (count xv) n) false
-          :else true)))
+    (not (or (zero? n) (= (count xv) n)))))
 
 (fact 
   (half-truth false false) => false
