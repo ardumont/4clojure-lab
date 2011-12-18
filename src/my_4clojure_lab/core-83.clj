@@ -11,10 +11,9 @@
 ;; true, but not all of the parameters are true.
 ;; Otherwise your function should return false.
 
-(defn half-truth "Takes a variable number of booleans. "
+(defn half-truth "Takes a variable number of booleans. Returns true if some of the parameters are true, else return false."
   [& xv]
-  (let [n (count (filter truthy xv))]
-    (not (or (zero? n) (= (count xv) n)))))
+  (let [n (count (filter truthy xv))] (not (or (zero? n) (= (count xv) n)))))
 
 (fact 
   (half-truth false false) => false
