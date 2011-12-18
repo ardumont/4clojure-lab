@@ -10,7 +10,7 @@
 
 (defn my-intersect "Returns the intersection of two sets."
   [s0 s1]
-  (set (filter #(when (s1 %) s1) s0)))
+  (set (filter #(when (s1 %) %) s0)))
 
 (fact
   (my-intersect #{0 1 2 3} #{2 3 4 5}) => #{2 3}
