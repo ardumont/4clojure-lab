@@ -14,11 +14,7 @@
 
 (defn grp-by "Group by"
   [f v]
-  (reduce (fn [m c]
-            (if (m (f c))
-              (assoc m (f c) (conj (m (f c)) c))
-              (assoc m (f c) [c])))
-          {} v))
+  (reduce (fn [m c] (assoc m (f c) (conj (m (f c) []) c))) {} v))
 
 (fact
   (grp-by #(> % 5) #{1 3 6 8})                    => {false [1 3], true [6 8]}
