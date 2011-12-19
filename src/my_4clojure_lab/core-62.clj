@@ -12,7 +12,7 @@
 
 (defn my-ite "Iterate implementation"
   [f x]
-  (lazy-seq (cons x (my-ite f (f x)))))
+  (cons x (lazy-seq x (my-ite f (f x)))))
 
 (fact
   (take 5 (my-ite #(* 2 %) 1)) => [1 2 4 8 16]
