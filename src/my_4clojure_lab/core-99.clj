@@ -10,10 +10,8 @@
 
 (defn pdt "Function which multiplies two numbers and returns the result as a sequence of its digits."
   [a b]
-  (loop [n (* a b) acc nil]
-    (if (zero? n)
-      (vec acc)
-      (recur (quot n 10) (cons (rem n 10) acc)))))
+  (let [z (zipmap "0123456789" (range 10))]
+    (map z (reduce conj [] (str (* a b))))))
 
 (fact
   (pdt 1 1) => [1]
