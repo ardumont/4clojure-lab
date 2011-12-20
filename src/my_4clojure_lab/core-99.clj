@@ -9,8 +9,8 @@
 ;; Write a function which multiplies two numbers and returns the result as a sequence of its digits.
 
 (defn pdt "Function which multiplies two numbers and returns the result as a sequence of its digits."
-  [a b]
-  (map (comp read-string str) (str (* a b))))
+  [& xv]
+  (map (comp read-string str) (str (apply * xv))))
 
 (fact
   (pdt 1 1) => [1]
