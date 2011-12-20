@@ -10,7 +10,7 @@
 
 (defn pdt "Function which multiplies two numbers and returns the result as a sequence of its digits."
   [a b]
-  (map read-string (reduce #(conj % (str %2)) [] (str (* a b)))))
+  (map (comp read-string str) (str (* a b))))
 
 (fact
   (pdt 1 1) => [1]
