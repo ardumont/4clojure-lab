@@ -17,7 +17,7 @@
   [n]
   (if (= 1 n) [1]
       (let [t (triangle (dec n))]
-        (concat [1] (map #(+ % %2) t (rest t)) [1]))))
+        (concat [1] (map + t (rest t)) [1]))))
 
 (fact 
   (triangle 1) => [1]
