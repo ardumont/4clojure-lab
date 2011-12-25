@@ -12,10 +12,12 @@
 
 (defn bin-tree? "Is this tree a binary one?"
   [t]
-  (and
-   (= 3 (count t))
-   (or (nil? (nth t 1)) (and (nth t 1) (bin-tree? (nth t 1))))
-   (or (nil? (nth t 2)) (and (nth t 2) (bin-tree? (nth t 2))))))
+  (or
+   (nil? t)
+   (and
+    (coll? t)
+    (= 3 (count t))
+    (every? bin-tree? (next t)))))
 
 (fact 
   (bin-tree? '(:a (:b nil nil) nil)) => true
