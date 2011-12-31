@@ -11,7 +11,7 @@
 
 (defn gcd "Greatest common divisor"
   [a b]
-  (if (zero? b) a
+  (if (= 0 b) a
       (gcd b (mod a b))))
 
 (fact 
