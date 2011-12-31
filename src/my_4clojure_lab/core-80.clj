@@ -12,8 +12,7 @@
 
 (defn perfect? "Is the number perfect?"
   [n]
-  (letfn [(d [n] (filter #(not= nil %) (map #(when (zero? (rem n %)) %) (range 1 n))))]
-    (= n (reduce + (d n)))))
+  (= n (reduce + (for [x (range 1 n) :when (zero? (rem n x))] x))))
 
 (fact "IT test"
   (perfect? 6) => true
