@@ -15,13 +15,6 @@
           (l [a b] (/ (* a b) (g a b)))]
     (reduce l f xv)))
 
-#_(defn pow [base exp]
-  (letfn [(kapow [base exp acc]
-            (if (zero? exp)
-              acc
-              (recur base (dec exp) (* base acc))))]
-    (kapow base exp 1)))
-
 (fact 
   (lcm 2 3) => 6
   (lcm 5 3 7) => 105
