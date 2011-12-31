@@ -10,10 +10,9 @@
 ;; function should accept a variable number of positive integers or ratios.
 
 (defn lcm "Least common multiple"
-  [f & xv]
-  (letfn [(g [a b] (if (= 0 b) a (g b (mod a b))))
-          (l [a b] (/ (* a b) (g a b)))]
-    (reduce l f xv)))
+  [f & r]
+  (letfn [(g [a b] (if (= 0 b) a (g b (mod a b))))]
+    (reduce #(/ (* % %2) (g % %2)) f r)))
 
 (fact 
   (lcm 2 3) => 6
