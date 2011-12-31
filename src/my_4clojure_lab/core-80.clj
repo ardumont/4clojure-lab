@@ -10,20 +10,10 @@
 ;; itself. 6 is a perfect number because 1+2+3=6. Write a function
 ;; which returns true for perfect numbers and false otherwise.
 
-(defn divisors "Compute the divisors of a number"
-  [n]
-  (filter #(not= nil %) (map #(when (zero? (rem n %)) %) (range 1 n))))
-
-(fact
-  (divisors 6) => [1 2 3])
-
 (defn perfect? "Is the number perfect?"
   [n]
-  (= n (reduce + (divisors n))))
-
-(fact "Mock test"
-  (perfect? 6) => true
-  (provided (divisors 6) => [1 2 3]))
+  (letfn [(d [n] (filter #(not= nil %) (map #(when (zero? (rem n %)) %) (range 1 n))))]
+    (= n (reduce + (d n)))))
 
 (fact "IT test"
   (perfect? 6) => true
