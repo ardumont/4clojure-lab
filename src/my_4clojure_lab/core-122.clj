@@ -11,7 +11,7 @@
 
 (defn bin "Convert a binary number into its numerical value"
   [b]
-  (reduce + (map #(* (read-string (str %)) %2) (reverse b) (take (count b) (iterate #(* 2 %) 1)))))
+  (read-string (str "2r" b)))
 
 (fact
   (bin "0") => 0
