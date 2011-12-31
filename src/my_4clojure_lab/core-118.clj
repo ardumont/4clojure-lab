@@ -12,9 +12,7 @@
 
 (defn mmap "Map implementation"
   [f [e & r]]
-  (if (nil? e)
-    nil
-    (cons (f e) (lazy-seq (mmap f r)))))
+  (cons (f e) (lazy-seq (if r (mmap f r)))))
 
 (fact 
   (mmap inc [2 3 4 5 6]) => [3 4 5 6 7]
