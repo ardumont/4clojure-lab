@@ -17,7 +17,6 @@
 (fact 
   (mmap inc [2 3 4 5 6]) => [3 4 5 6 7]
   (mmap (fn [_] nil) (range 10)) => (repeat 10 nil)
-  (->> (mmap inc (range)) (drop (dec 1e6)) (take 2)) => [1e6 (inc 1e6)]
-  (->> (map inc (range)) (drop (dec 1e6)) (take 2)) => [1e6 (inc 1e6)])
+  (->> (mmap inc (range)) (drop (dec 1e6)) (take 2)) => [1000000 1000001])
 
 (println "--------- END 118  ----------" (java.util.Date.))
