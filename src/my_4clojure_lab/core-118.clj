@@ -12,7 +12,7 @@
 
 (defn mmap "Map implementation"
   [f s]
-  (for [x s] (f x)))
+  (reduce #(conj % (f %2)) [] s))
 
 (fact 
   (mmap inc [2 3 4 5 6]) => [3 4 5 6 7]
