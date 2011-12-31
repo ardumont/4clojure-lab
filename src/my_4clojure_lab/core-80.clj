@@ -12,7 +12,7 @@
 
 (defn perfect? "Is the number perfect?"
   [n]
-  (= n (reduce + (for [x (range 1 n) :when (zero? (rem n x))] x))))
+  (= n (apply + (for [x (range 1 n) :when (= 0 (rem n x))] x))))
 
 (fact "IT test"
   (perfect? 6) => true
