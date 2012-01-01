@@ -26,7 +26,7 @@
 
 (defn bin-tree-sym? ""
   [[_ x y]]
-  (= y ((fn m [t] (if (coll? t) (let [[a b c] t] [a (m c) (m b)]) t)) x)))
+  (= x ((fn m [t] (if t (let [[a b c] t] [a (m c) (m b)]) t)) y)))
 
 (fact
   (bin-tree-sym? '(:a (:b nil nil)
