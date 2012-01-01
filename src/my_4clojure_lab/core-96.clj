@@ -19,7 +19,7 @@
    (and
     (coll? t)
     (= 3 (count t))
-    (= (nth t 1) (nth t 2))
+    (= (set (flatten (nth t 1))) (set (flatten (nth t 2))))
     (every? bin-tree-sym? (next t)))))
 
 (fact
