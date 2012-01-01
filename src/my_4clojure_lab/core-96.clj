@@ -25,8 +25,8 @@
   (mirror [:a [:b :c :d] [:e :f :g]]) => [:a [:e :g :f] [:b :d :c]])
 
 (defn bin-tree-sym? ""
-  [[_ x y]]
-  (= x ((fn m [[a b c :as t]] (if t [a (m c) (m b)] t)) y)))
+  [t]
+  (= t ((fn m [[a b c :as r]] (if r [a (m c) (m b)] r)) t)))
 
 (fact
   (bin-tree-sym? '(:a (:b nil nil)
