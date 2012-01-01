@@ -26,12 +26,13 @@
 
 (defn bin-tree-sym? ""
   [t]
-  (or
-   (nil? t)
-   (and
-    (coll? t)
-    (= 3 (count t))
-    (= (nth t 1) (mirror (nth t 2))))))
+  (letfn [(m [t] (if (coll? t) (let [[a b c] t] [a (m c) (m b)]) t))]
+    (or
+     (nil? t)
+     (and
+      (coll? t)
+      (= 3 (count t))
+      (= (nth t 1) (m (nth t 2)))))))
 
 (fact
   (bin-tree-sym? '(:a (:b nil nil)
