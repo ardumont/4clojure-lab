@@ -15,12 +15,10 @@
 (defn f
   [s]
   (count
-   (filter
-    (fn [d]
-      (let [sd (str d)
-            sum (reduce #(let [c (read-string (str %2))] (+ % (* c c))) 0 sd)]
-        (when (< d sum) d)))
-    s)))
+   (for [x s
+         :let [d (map (comp read-string str) (str x))]
+         :when (< x (reduce + (map #(* % %) d)))]
+     s)))
 
 (fact
   (f (range 10)) => 8
