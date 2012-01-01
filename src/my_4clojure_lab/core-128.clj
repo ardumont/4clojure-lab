@@ -40,10 +40,9 @@
 
 (defn card "Playing card"
   [t]
-  (letfn [(s [e] (assoc {} :suit ({\S :spade \D :diamond \H :heart \C :club} e)))
-          (r [e] (assoc {} :rank ({\2 0 \3 1 \4 2 \5 3 \6 4 \7 5 \8 6 \9 7
-                                   \T 8 \J 9 \Q 10 \K 11 \A 12} e)))]
-    (conj (s (nth t 0)) (r (nth t 1)))))
+  (conj (assoc {} :suit ({\S :spade \D :diamond \H :heart \C :club} (nth t 0)))
+        (assoc {} :rank ({\2 0 \3 1 \4 2 \5 3 \6 4 \7 5 \8 6 \9 7
+                          \T 8 \J 9 \Q 10 \K 11 \A 12}  (nth t 1)))))
 
 (fact
   (card "DQ") => {:suit :diamond :rank 10}
