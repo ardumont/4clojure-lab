@@ -39,10 +39,10 @@
 ;; 12   ace
 
 (defn card "Playing card"
-  [t]
-  (conj (assoc {} :suit ({\S :spade \D :diamond \H :heart \C :club} (nth t 0)))
+  [[s r]]
+  (conj (assoc {} :suit ({\S :spade \D :diamond \H :heart \C :club} s))
         (assoc {} :rank ({\2 0 \3 1 \4 2 \5 3 \6 4 \7 5 \8 6 \9 7
-                          \T 8 \J 9 \Q 10 \K 11 \A 12}  (nth t 1)))))
+                          \T 8 \J 9 \Q 10 \K 11 \A 12} r))))
 
 (fact
   (card "DQ") => {:suit :diamond :rank 10}
