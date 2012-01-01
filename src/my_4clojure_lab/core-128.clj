@@ -40,9 +40,8 @@
 
 (defn card "Playing card"
   [[s r]]
-  (conj {:suit ({\S :spade \D :diamond \H :heart \C :club} s)}
-        {:rank ({\2 0 \3 1 \4 2 \5 3 \6 4 \7 5 \8 6 \9 7
-                  \T 8 \J 9 \Q 10 \K 11 \A 12} r)}))
+  {:suit ({\S :spade \D :diamond \H :heart \C :club} s)
+   :rank ({\2 0 \3 1 \4 2 \5 3 \6 4 \7 5 \8 6 \9 7 \T 8 \J 9 \Q 10 \K 11 \A 12} r)})
 
 (fact
   (card "DQ") => {:suit :diamond :rank 10}
