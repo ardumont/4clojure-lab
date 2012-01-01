@@ -17,8 +17,8 @@
 ;; just calculates left to right.
 
 (defn compute "Compute"
-  [& xv]
-  (first (reduce #(if (= 2 (count %)) [((last %) (first %) %2)] (conj % %2)) [] xv)))
+  [x & r]
+  (reduce (fn [e [op l]] (op e l)) x (partition 2 r)))
 
 (fact 
   (compute 2 + 5) => 7
