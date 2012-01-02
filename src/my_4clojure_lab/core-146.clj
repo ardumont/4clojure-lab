@@ -23,11 +23,7 @@
 
 (defn trees-into-tables ""
   [m]  
-  (into {}
-        (reduce (fn [s e]
-                  (mapcat #(conj s {[e %] %2}) (keys (m e)) (vals (m e))))
-                {}
-                (keys m))))
+  (into {} (for [[k n] m [k2 v] n] [[k k2] v])))
 
 (fact 
   (trees-into-tables '{a {p 1, q 2}
