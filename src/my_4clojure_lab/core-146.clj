@@ -22,8 +22,8 @@
 ;; 1 That is, (get-in original [k1 k2]) should be the same as (get result [k1 k2])
 
 (defn trees-into-tables ""
-  [m]
-  (reduce (fn [n e] (map #(conj n {[e %] %2}) (keys (m e)) (vals (m e)))) {} (keys m)))
+  [m]  
+  (into {} (reduce (fn [s e] (mapcat #(conj s {[e %] %2}) (keys (m e)) (vals (m e)))) [] (keys m))))
 
 (fact 
   (trees-into-tables '{a {p 1, q 2}
