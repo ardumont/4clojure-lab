@@ -15,11 +15,7 @@
 
 (defn split-by-type "Write a function which takes a sequence consisting of items with different types and splits them up into a set of homogeneous sub-sequences"
   [s]
-  (let [k (filter keyword? s)
-        t (filter string? s)
-        c (filter coll? s)
-        n (filter number? s)]
-    (remove empty? (concat [k] [t] [c] [n]))))
+  (vals (group-by class s)))
 
 (fact 
   (set (split-by-type [1 :a 2 :b 3 :c])) => #{[1 2 3] [:a :b :c]}
