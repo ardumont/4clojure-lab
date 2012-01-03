@@ -19,7 +19,7 @@
         t (filter string? s)
         c (filter coll? s)
         n (filter number? s)]
-    (filter #(not= [] %) (concat [k] [t] [c] [n]))))
+    (remove empty? (concat [k] [t] [c] [n]))))
 
 (fact 
   (set (split-by-type [1 :a 2 :b 3 :c])) => #{[1 2 3] [:a :b :c]}
