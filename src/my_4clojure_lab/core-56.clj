@@ -11,7 +11,13 @@
 
 (defn my-distinct "Distinct implementation"
   [s]
-  (into #{} s))
+  (filter
+   #(not= -1 %)
+   (reduce
+    (fn [v e]
+      (conj v (if (some #{e} v) -1 e)))
+    []
+    s)))
 
 (fact 
   (my-distinct [1 2 1 3 1 2 4]) => [1 2 3 4]
