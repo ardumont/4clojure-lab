@@ -15,54 +15,12 @@
 ;; Note: Some test cases have a very large n, so the most obvious
 ;; solution will exceed the time limit.
 
-(defn borne-max "Compute the last number max to be multiple of n in the set [1 - b["
-  [n b]
-  (loop [curr (dec b)]
-    (if (zero? (rem curr n))
-      curr
-      (recur (dec curr)))))
-
-;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
-;.;.     Expected: 1000
-;.;.       Actual: 995
-(fact "Compute the last number max to be multiple of n"
-  (borne-max 3 1000) => 999
-  (borne-max 5 1000) => 995
-  (borne-max 15 1000) => 990)
-
-(defn sum-1-borne "Compute the sum from 1 to n"
-  [n]
-  (* n 1/2 (inc n)))
-
-(fact
-  (sum-1-borne 10) => 55)
-
-(defn sum-multiple-of-n "Compute the sum of all the multiples of n in the interval 1-borne"
-  [n max]
-  (let [borne (borne-max n max)
-        sum (sum-1-borne (/ borne n))]
-    (* n sum)))
-
-(fact "Mock"
-  (sum-multiple-of-n 3 :b) => 166833
-  (provided
-    (borne-max 3 :b) => 999
-    (sum-1-borne 333) => 55611))
-
-(fact "Mock2"
-    (sum-multiple-of-n 5 :b) => 99500
-  (provided
-    (borne-max 5 :b) => 995
-    (sum-1-borne 199) => 19900))
-
-(fact "Real test on the sum of multiples"
-  (sum-multiple-of-n 3 1000) => 166833
-  (sum-multiple-of-n 5 1000) => 99500
-  (sum-multiple-of-n 15 1000) => 33165)
-
 (defn big-divide "Calculates the sum of all natural numbers under which are evenly divisible by at least one of a and b"
   [n a b]
-  (- (+ (sum-multiple-of-n a n) (sum-multiple-of-n b n)) (sum-multiple-of-n (* a b) n)))
+  (letfn [(borne-max [n b] (loop [curr (dec b)] (if (zero? (rem curr n)) curr (recur (dec curr)))))
+          (sum-1-borne [n] (* n 1/2 (inc n)))
+          (sum-multiple-of-n [n max] (let [borne (borne-max n max) sum (sum-1-borne (/ borne n))] (* n sum)))]
+    (- (+ (sum-multiple-of-n a n) (sum-multiple-of-n b n)) (sum-multiple-of-n (* a b) n))))
 
 (fact 
   (big-divide 3 17 11) => 0
