@@ -11,7 +11,7 @@
 
 (defn occurences ""
   [s]
-  (reduce (fn [m e] (assoc m e (inc (m e 0)))) {} s))
+  (reduce #(assoc % %2 (+ 1 (% %2 0))) {} s))
 
 (fact 
   (occurences [1 1 2 3 2 1 1]) => {1 4, 2 2, 3 1}
