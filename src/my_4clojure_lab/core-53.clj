@@ -17,16 +17,21 @@
   (second
    (reduce
     (fn [[m v :as r] e]
-      (println r e (m (dec e)))
-       ;; if the previous key (dec e) exists then e became the new key and the
-       ;; value is the seq we read until now with e as the last
-       ;; element, else we reinit the map with e as key and the
-       ;; sequence we read is just e
-      [{e (if (m (dec e)) (conj (m (dec e)) e) #{e})}
+      ;;      (println r e (m (dec e)))
+      ;; if the previous key (dec e) exists then e became the new key and the
+      ;; value is the seq we read until now with e as the last
+      ;; element, else we reinit the map with e as key and the
+      ;; sequence we read is just e
+      [{e (if (m (dec e))
+            (conj (m (dec e)) e)
+            #{e})}
        ;; if we now have a sequence with a greater length, we take
        ;; this one, that is we retrieve the first value of vals from
        ;; the map and copy it inside the vector of the longest sequence
-       (if (<= (count v) (count (first (vals m)))) (first (vals m)) (into [] v))])
+       (let [f (first (vals m))]
+         (if (and (< (count v) (count f)) (<= 2 (count f)))
+           f
+           (into [] v)))])
     
     [{} []]
     s)))
