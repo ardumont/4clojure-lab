@@ -27,11 +27,10 @@
         [n
          ;; if we now have a sequence with a greater length, we take
          ;; this one, that is we retrieve the first value of vals from
-         ;; the map and copy it inside the vector of the longest sequence
-         (let [f (first (vals n))]
-           (if (and (<= 2 (count f)) (< (count v) (count f)))
-             f
-             v))]))
+         ;; the map and that became the longest subsequence we saw
+         (let [f (first (vals n))
+               c (count f)]
+           (if (and (<= 2 c) (< (count v) c)) f v))]))
     [{} []]
     s)))
 
