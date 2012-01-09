@@ -14,9 +14,9 @@
 
 (defn longest "Find the longest consecutive sub-sequence of increasing numbers."
   [s]
-  (second
+  (nth
    (reduce
-    (fn [[m v] e]
+    (fn [[v m] e]
       ;; if the previous key (dec e) exists then e became the new key and the
       ;; value is the seq we read until now with e as the last
       ;; element, else we reinit the map with e as key and the
@@ -24,15 +24,16 @@
       (let [n {e (if (m (dec e))
                    (conj (m (dec e)) e)
                    [e])}]
-        [n
-         ;; if we now have a sequence with a greater length, we take
+        [;; if we now have a sequence with a greater length, we take
          ;; this one, that is we retrieve the first value of vals from
          ;; the map and that became the longest subsequence we saw
          (let [f (first (vals n))
                c (count f)]
-           (if (and (<= 2 c) (< (count v) c)) f v))]))
-    [{} []]
-    s)))
+           (if (and (<= 2 c) (< (count v) c)) f v))
+         n]))
+    [[] {}]
+    s)
+   0))
 
 (fact
   (longest [1 0 1 2 3 0 4 5]) => [0 1 2 3]
