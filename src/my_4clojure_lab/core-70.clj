@@ -13,9 +13,7 @@
 
 (defn wsort "Splits a sequence up into a sorted list of words."
   [s]
-  (sort-by
-   #(.toLowerCase %)
-   (re-seq #"[a-zA-Z]+" s)))
+  (sort-by #(.toLowerCase %) (re-seq #"\w+" s)))
 
 (fact
   (wsort "Have a nice day.") => ["a" "day" "Have" "nice"]
