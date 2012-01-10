@@ -13,8 +13,8 @@
 
 (defn wsort "Splits a sequence up into a sorted list of words."
   [s]
-  (sort
-   #(compare (.toLowerCase %) (.toLowerCase %2))
+  (sort-by
+   #(.toLowerCase %)
    (filter #(not= "" %) (re-seq #"[a-zA-Z]*" s))))
 
 (fact
