@@ -13,14 +13,12 @@
 ;; list.
 
 (defn mjuxt "Juxt implementation"
-  ([& r] (fn [& a] (map (fn [f] (apply f a)) r))))
+  ([& r] (fn [& a] (map #(apply % a) r))))
 
 ;.;. The work itself praises the master. -- CPE Bach
 (fact
   ((mjuxt + max min) 2 3 5 1 6 4) => [21 6 1]
-  ((mjuxt :a :c :b) {:a 2, :b 4, :c 6, :d 8, :e 10}) => [2 6 4])
-
-(fact
+  ((mjuxt :a :c :b) {:a 2, :b 4, :c 6, :d 8, :e 10}) => [2 6 4]
   ((mjuxt #(.toUpperCase %) count) "hello") => ["HELLO" 5])
 
 (println "--------- END 59  ----------" (java.util.Date.))
