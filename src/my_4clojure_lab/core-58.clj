@@ -12,13 +12,13 @@
 ;; create a function applies them from right-to-left.
 
 (defn mcomp "Comp implementation."
-  ([f g] #(f (g %))))
+  ([f g] (fn [v] (-> v g f))))
 
-(fact
+(fact "Function with vector as argument"
   ((mcomp rest reverse) [1 2 3 4]) => [3 2 1]
   ((mcomp (partial + 3) second) [1 2 3 4]) => 5)
 
-(future-fact 
+(fact "Function with a list of arguments"
   ((mcomp zero? #(mod % 8) +) 3 5 7 9) => truthy
   ((mcomp #(.toUpperCase %) #(apply str %) take) 5 "hello world") => "HELLO")
 
