@@ -15,7 +15,7 @@
   [s]
   (sort-by
    #(.toLowerCase %)
-   (filter #(not= "" %) (re-seq #"[a-zA-Z]*" s))))
+   (re-seq #"[a-zA-Z]+" s)))
 
 (fact
   (wsort "Have a nice day.") => ["a" "day" "Have" "nice"]
