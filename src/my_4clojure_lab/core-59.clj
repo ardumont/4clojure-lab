@@ -20,7 +20,7 @@
   ((mjuxt + max min) 2 3 5 1 6 4) => [21 6 1]
   ((mjuxt :a :c :b) {:a 2, :b 4, :c 6, :d 8, :e 10}) => [2 6 4])
 
-(future-fact "Find out why it breaks!"
-    ((mjuxt (#(.toUpperCase %) count)) "hello") => ["HELLO" 5])
+(fact
+  ((mjuxt #(.toUpperCase %) count) "hello") => ["HELLO" 5])
 
 (println "--------- END 59  ----------" (java.util.Date.))
