@@ -13,7 +13,7 @@
 
 (defn mcomp "Comp implementation."
   ([f g] (fn [v] (-> v g f)))
-  ([f g h] (fn [& v] (-> v (apply h)) g h)))
+  ([f g h] (fn [& v] (f (g (apply h v))))))
 
 (fact "Function with vector as argument"
   ((mcomp rest reverse) [1 2 3 4]) => [3 2 1]
