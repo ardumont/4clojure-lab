@@ -13,7 +13,7 @@
 ;; list.
 
 (defn mjuxt "Juxt implementation"
-  ([& r] (fn [& a] (map #(apply % a) r))))
+  [& r] (fn [& a] (map #(apply % a) r)))
 
 ;.;. The work itself praises the master. -- CPE Bach
 (fact
