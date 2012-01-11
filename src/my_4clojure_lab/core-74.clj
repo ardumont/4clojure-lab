@@ -14,8 +14,10 @@
 
 (defn psquare ""
   [s]
-  (let [q (fn [b] (set (map #(* % %) (range 1 b))))]
-    (join "," (filter #((q %) %) (map read-string (re-seq #"\d+" s))))))
+  (let [l (map read-string (re-seq #"\d+" s))
+        n (apply max l)
+        q (set (map #(* % %) (range 1 n)))]
+    (join "," (filter q l))))
 
 (fact
   (psquare "4,5,6,7,8,9") => "4,9"
