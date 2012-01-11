@@ -3,8 +3,7 @@
   (:use clojure.repl)
   (:use clojure.java.javadoc)
   (:use [midje.sweet])
-  (:use [clojure.pprint :only [pprint]])
-  (:use [clojure.string :only (split join)]))
+  (:use [clojure.pprint :only [pprint]]))
 
 (println "--------- BEGIN 74  ----------" (java.util.Date.))
 
@@ -17,7 +16,7 @@
   (let [l (map read-string (re-seq #"\d+" s))
         n (apply max l)
         q (set (map #(* % %) (range n)))]
-    (join "," (filter q l))))
+    (apply str (interpose "," (filter q l)))))
 
 (fact
   (psquare "4,5,6,7,8,9") => "4,9"
