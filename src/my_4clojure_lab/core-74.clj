@@ -16,7 +16,7 @@
   [s]
   (let [l (map read-string (re-seq #"\d+" s))
         n (apply max l)
-        q (set (map #(* % %) (range 1 n)))]
+        q (set (map #(* % %) (range n)))]
     (join "," (filter q l))))
 
 (fact
