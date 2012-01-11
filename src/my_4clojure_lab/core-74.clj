@@ -13,10 +13,7 @@
 
 (defn psquare ""
   [s]
-  (let [l (map read-string (re-seq #"\d+" s))
-        n (apply max l)
-        q (set (map #(* % %) (range n)))]
-    (apply str (interpose "," (filter q l)))))
+  (apply str (interpose "," (filter #(let [r (Math/sqrt %)] (= r (Math/floor r))) (map read-string (re-seq #"\d+" s))))))
 
 (fact
   (psquare "4,5,6,7,8,9") => "4,9"
