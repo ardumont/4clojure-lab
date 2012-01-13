@@ -13,13 +13,12 @@
 ;; lazy.
 
 (defn mred "Reductions implementation."
-  [g [f & r]]
-  (reduce #(conj % (g (last %) %2)) [f] r))
+  ([f v]
+     (lazy-seq (mred f (first v) (rest v))))
+  ([f i v]
+     (cons i (lazy-seq (mred f (f i (first v)) (rest v))))))
 
 (fact
-  (mred + [0 1 2 3 4]) => [0 1 3 6 10])
-
-(future-fact
   (take 5 (mred + (range))) => [0 1 3 6 10])
 
 (future-fact
