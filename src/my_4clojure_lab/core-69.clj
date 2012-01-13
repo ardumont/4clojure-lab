@@ -15,13 +15,7 @@
 
 (defn mmerge-with "merge-with implementation"
   [f m & xv]
-  (reduce
-   (fn [a [k v]]
-     (if (a k)
-       (assoc a k (f (a k) v))
-       (assoc a k v)))
-   m
-   (apply merge xv)))
+  (reduce (fn [a [k v]] (assoc a k (if (a k) (f (a k) v) v))) m (apply merge xv)))
 
 (fact 
   (mmerge-with * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5}) => {:a 4, :b 6, :c 20}
