@@ -11,7 +11,7 @@
 ;; returns a new comma separated string that only contains the numbers
 ;; which are perfect squares.
 
-(defn psquare ""
+(defn psquare "Returns a new comma separated string that only contains the numbers which are perfect squares."
   [s]
   (clojure.string/join
    ","
