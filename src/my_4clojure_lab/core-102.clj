@@ -17,7 +17,7 @@
   [s]
   (let [[f & r] (re-seq #"\w+" s)
         v (map clojure.string/capitalize r)]
-    (reduce str (concat f v))))
+    (apply str (concat f v))))
 
 (fact 
   (camel-case "something") => "something"
