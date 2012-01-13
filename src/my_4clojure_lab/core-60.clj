@@ -17,6 +17,9 @@
   (reduce #(conj % (g (last %) %2)) [f] r))
 
 (fact
+  (mred + [0 1 2 3 4]) => [0 1 3 6 10])
+
+(future-fact
   (take 5 (mred + (range))) => [0 1 3 6 10])
 
 (future-fact
