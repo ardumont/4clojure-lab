@@ -13,7 +13,12 @@
 
 (defn psquare ""
   [s]
-  (clojure.string/join "," (filter #(let [r (Math/sqrt %)] (= r (Math/floor r))) (map read-string (re-seq #"\d+" s)))))
+  (clojure.string/join
+   ","
+   (filter
+    #(let [r (Math/sqrt %)]
+       (= r (Math/floor r)))
+    (map read-string (re-seq #"\d+" s)))))
 
 (fact
   (psquare "4,5,6,7,8,9") => "4,9"
