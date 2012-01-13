@@ -14,8 +14,8 @@
 ;; combined with the mapping in the result by calling (f val-in-result val-in-latter)
 
 (defn mmerge-with "merge-with implementation"
-  [f m & xv]
-  (reduce (fn [a [k v]] (assoc a k (if (a k) (f (a k) v) v))) m (apply merge xv)))
+  [f m & x]
+  (reduce (fn [a [k v]] (assoc a k (if (a k) (f (a k) v) v))) m (apply merge x)))
 
 (fact 
   (mmerge-with * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5}) => {:a 4, :b 6, :c 20}
