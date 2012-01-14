@@ -21,14 +21,13 @@
 
 (defn happy? "Determines if a number is happy or not."
   [i]
-  (let [m (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81])]
-    ((fn f [s n]
-        (or
-         (= n 1)
-         (if (s n)
-           false
-           (f (conj s n) (apply + (map m (str n)))))))
-      #{} i)))
+  ((fn f [s n]
+     (or
+      (= n 1)
+      (if (s n)
+        false
+        (f (conj s n) (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str n)))))))
+   #{} i))
 
 (fact 
   (happy? 7) => true
