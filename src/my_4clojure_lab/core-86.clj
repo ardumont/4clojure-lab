@@ -19,7 +19,7 @@
   [i]
   (if (<= i 4)
     false
-    (let [s (apply + (map #(let [i (read-string %)] (* i i)) (re-seq #"\d" (str i))))]
+    (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str i)))]
       (if (= 1 s)
         true
         (happy-number s)))))
