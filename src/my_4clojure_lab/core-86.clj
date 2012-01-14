@@ -15,21 +15,21 @@
 ;; loops endlessly. Write a function that determines if a number is
 ;; happy or not.
 
-(defn happy-number ""
+(defn happy-number? ""
   ([i]
-     (happy-number i 0))
+     (happy-number? i 0))
   ([i c]
      (if (<= 100 c)
        false
        (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str i)))]
          (if (= 1 s)
            true
-           (happy-number s (inc c)))))))
+           (happy-number? s (inc c)))))))
 
 (fact 
-  (happy-number 7) => true
-  (happy-number 986543210) => true
-  (happy-number 2) => false
-  (happy-number 3) => false)
+  (happy-number? 7) => true
+  (happy-number? 986543210) => true
+  (happy-number? 2) => false
+  (happy-number? 3) => false)
 
 (println "--------- END 86  ----------" (java.util.Date.))
