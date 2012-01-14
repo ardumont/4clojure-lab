@@ -13,16 +13,14 @@
 ;; lazy.
 
 (defn mred "Reductions implementation."
-  ([f v]
-     (lazy-seq (mred f (first v) (rest v))))
-  ([f i v]
-     (cons i (lazy-seq (mred f (f i (first v)) (rest v))))))
+  ([f v])
+  ([f i v]))
 
 (fact
-  (take 5 (mred + (range))) => [0 1 3 6 10])
+  (take 5 (mred + (range))) => [0 1 3 6 10]
+  (mred conj [1] [2 3 4]) => [[1] [1 2] [1 2 3] [1 2 3 4]])
 
 (future-fact
- (mred conj [1] [2 3 4]) => [[1] [1 2] [1 2 3] [1 2 3 4]]
  (last (mred * 2 [3 4 5])) => 120)
 
 (println "--------- END 60  ----------" (java.util.Date.))
