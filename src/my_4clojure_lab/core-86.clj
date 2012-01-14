@@ -15,18 +15,25 @@
 ;; loops endlessly. Write a function that determines if a number is
 ;; happy or not.
 
-(defn happy-number? "Determines if a number is happy or not - Max loop is 100 - so a number is considered not happy if we go beyond 100 checks."
+;; info: http://en.wikipedia.org/wiki/Happy_number
+;; tips: when a number is not an happy one, there is a cycle of repetition
+;; of the same number.
+
+(defn happy? "Determines if a number is happy or not."
   [i]
-  (loop [n i c 100]
-    (if (= 0 c)
-       false
-       (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str n)))]
-         (or (= 1 s) (recur s (dec c)))))))
+  (let [m (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81])]
+    ((fn f [s n]
+        (or
+         (= n 1)
+         (if (s n)
+           false
+           (f (conj s n) (apply + (map m (str n)))))))
+      #{} i)))
 
 (fact 
-  (happy-number? 7) => true
-  (happy-number? 986543210) => true
-  (happy-number? 2) => false
-  (happy-number? 3) => false)
+  (happy? 7) => true
+  (happy? 986543210) => true
+  (happy? 2) => false
+  (happy? 3) => false)
 
 (println "--------- END 86  ----------" (java.util.Date.))
