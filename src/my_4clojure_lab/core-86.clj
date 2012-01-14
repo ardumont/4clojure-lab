@@ -16,13 +16,15 @@
 ;; happy or not.
 
 (defn happy-number ""
-  [i]
-  (if (<= i 4)
-    false
-    (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str i)))]
-      (if (= 1 s)
-        true
-        (happy-number s)))))
+  ([i]
+     (happy-number i 0))
+  ([i c]
+     (if (<= 100 c)
+       false
+       (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str i)))]
+         (if (= 1 s)
+           true
+           (happy-number s (inc c)))))))
 
 (fact 
   (happy-number 7) => true
