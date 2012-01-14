@@ -15,16 +15,15 @@
 ;; loops endlessly. Write a function that determines if a number is
 ;; happy or not.
 
-(defn happy-number? ""
-  ([i]
-     (happy-number? i 0))
-  ([i c]
-     (if (<= 100 c)
+(defn happy-number? "Determines if a number is happy or not - Max loop is 100 - so a number is considered not happy if we go beyond 100 checks."
+  [i]
+  (loop [n i c 100]
+    (if (= 0 c)
        false
-       (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str i)))]
+       (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str n)))]
          (if (= 1 s)
            true
-           (happy-number? s (inc c)))))))
+           (recur s (dec c)))))))
 
 (fact 
   (happy-number? 7) => true
