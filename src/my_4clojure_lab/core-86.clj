@@ -21,9 +21,7 @@
     (if (= 0 c)
        false
        (let [s (apply + (map (zipmap "0123456789" [0 1 4 9 16 25 36 49 64 81]) (str n)))]
-         (if (= 1 s)
-           true
-           (recur s (dec c)))))))
+         (or (= 1 s) (recur s (dec c)))))))
 
 (fact 
   (happy-number? 7) => true
