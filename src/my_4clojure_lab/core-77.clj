@@ -15,7 +15,7 @@
 
 (defn anagram "Anagram finder"
   [v]
-  (set (filter next (map set (vals (group-by set v))))))
+  (->> v (group-by set) vals (map set) (filter next) set))
 
 (fact
   (anagram ["meat" "mat" "team" "mate" "eat"]) => #{#{"meat" "team" "mate"}})
