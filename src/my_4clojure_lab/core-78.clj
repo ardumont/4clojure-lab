@@ -16,8 +16,7 @@
 
 (defn trampo "Trampoline implementation"
   [f & x]
-  (let [r (apply f x)]
-    (if (fn? r) (trampo r) r)))
+  (if (fn? f) (trampo (apply f x)) f))
 
 (fact
   (letfn [(triple [x] #(sub-two (* 3 x)))
