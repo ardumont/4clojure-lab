@@ -19,37 +19,20 @@
 
 (defn which-seq
   [s]
-  (let [l {:c :d}
-        k {:a :b}
-        t (conj s l k)
-        ft (first t)
-        lt (last t)
-        fs (first s)
-        ls (last s)]
+  (let [x :a
+        y :b]
     (cond
-     (or (= s #{}) (and (= lt ls)
-                        (= ft fs))) :set
-     (or (= t [l k]) (and (= fs ft)
-                          (= k lt))) :vector
-     (or (= t (conj () l k)) (and (= k ft)
-                                  (= ls lt))) :list
-     :else :map)))
+     (= (x (conj s [x y])) y) :map
+     (= (conj s x x) (conj s x)) :set
+     (= (last (conj s x y)) y) :vector
+     :else :list)))
 
+;.;. Out of clutter find simplicity; from discord find harmony; in the middle of difficulty lies opportunity. -- Einstein
 (fact "Tests ok"
   (which-seq [1 2 3 4 5 6]) => :vector
   (which-seq (range (rand-int 20))) => :list
+  (which-seq #{10 (rand-int 5)}) => :set
   (which-seq {:a 1, :b 2})  =>  :map
-  (which-seq #{10 (rand-int 5)}) => :set)
-
-;.;. {:a :b, :c :d}
-;.;. #{{:c :d} {:a :b}}
-;.;. [{:c :d} {:a :b}]
-;.;. ({:a :b} {:c :d})
-;.;. 
-;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
-;.;.     Expected: [:map :set :vector :list]
-;.;.       Actual: (:map :set :vector :map)
-(fact "Test in passing"
-     (map which-seq [{} #{} [] ()])   =>  [:map :set :vector :list])
+  (map which-seq [{} #{} [] ()])   =>  [:map :set :vector :list])
 
 (println "--------- END 65  ----------" (java.util.Date.))
