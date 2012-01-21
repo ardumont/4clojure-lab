@@ -15,17 +15,10 @@
 
 (defn anagram "Anagram finder"
   [v]
-  (letfn [(a? [s w] (and (= (count s) (count w)) (every? #(.contains s %) w)))]
-    (set
-     (filter
-      #(not= nil %)
-      (map
-       (fn [w]
-         (let [s (into [] w)
-               ss (filter #(a? s %) v)]
-           (if (<= 2 (count ss))
-             (set ss))))
-       v)))))
+  (set
+   (filter
+    #(<= 2 (count %))
+    (map set (vals (group-by set v))))))
 
 (fact
   (anagram ["meat" "mat" "team" "mate" "eat"]) => #{#{"meat" "team" "mate"}})
