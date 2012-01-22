@@ -12,9 +12,9 @@
 
 (defn balance? "Is the number balanced?"
   [n]
-  (let [c (fn [v] (apply + (map int v)))
+  (let [c #(apply + (map int %))
         s (str n)
-        h (int (/ (count s) 2))]
+        h (quot (count s) 2)]
     (=  (c (take h s)) (c (take h (reverse s))))))
 
 (fact
