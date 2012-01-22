@@ -17,7 +17,7 @@
       true
       (let [c (fn [m v] (reduce #(+ % (m %2)) 0 v))
             m (zipmap "0123456789" (range 10))
-            h (Math/floor (/ (count s) 2))]
+            h (int (/ (count s) 2))]
          (=  (c m (take (inc h) s)) (c m (drop h s)))))))
 
 (fact
