@@ -12,13 +12,11 @@
 
 (defn balance? "Is the number balanced?"
   [n]
-  (let [s (str n)]
-    (if (= (seq s) (seq (reverse s)))
-      true
-      (let [c (fn [m v] (reduce #(+ % (m %2)) 0 v))
-            m (zipmap "0123456789" (range 10))
-            h (int (/ (count s) 2))]
-         (=  (c m (take (inc h) s)) (c m (drop h s)))))))
+  (let [c (fn [m v] (reduce #(+ % (m %2)) 0 v))
+        m (zipmap "0123456789" (range 10))
+        s (str n)
+        h (int (/ (count s) 2))]
+    (=  (c m (take h s)) (c m (take h (reverse s))))))
 
 (fact
   (balance? 11)    => true
