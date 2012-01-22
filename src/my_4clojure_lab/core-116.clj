@@ -12,9 +12,9 @@
 
 (defn balanced-prime? "Determine if a number is a prime."
   [n]
-  (letfn [(p? [n] (not-any? #(= 0 (rem n %)) (take (int (Math/sqrt n)) (range 2 n))))
-          (s [n] (first (for [x (range (inc n) (* 2 n)) :when (p? x)] x)))
-          (p [n] (first (for [x (reverse (range 2 n)) :when (p? x)] x)))]
+  (let  [p? (fn [n] (not-any? #(= 0 (rem n %)) (range 2 n)))
+         s #(nth (for [x (range (inc %) (* 2 %)) :when (p? x)] x) 0)
+         p #(nth (for [x (reverse (range 2 %)) :when (p? x)] x) 0)]
     (and (< 2 n) (p? n) (= n (/ (+ (s n) (p n)) 2)))))
 
 (fact 
