@@ -12,10 +12,10 @@
 
 (defn balance? "Is the number balanced?"
   [n]
-  (let [c #(apply + (map int %))
-        s (str n)
-        h (quot (count s) 2)]
-    (=  (c (take h s)) (c (take h (reverse s))))))
+  (let [c #(apply + %)
+        i (map int (str n))
+        h (quot (count i) 2)]
+    (=  (c (take h i)) (c (take h (reverse i))))))
 
 (fact
   (balance? 11)    => true
