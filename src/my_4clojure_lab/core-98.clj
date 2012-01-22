@@ -12,7 +12,7 @@
 
 (defn equi "Equivalence relation"
   [f s]
-  (set (map (comp set val) (group-by f s))))
+  (set (map set (vals (group-by f s)))))
 
 (fact 
   (equi #(* % %) #{-2 -1 0 1 2}) => #{#{0} #{1 -1} #{2 -2}}
