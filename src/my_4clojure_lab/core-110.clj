@@ -15,7 +15,7 @@
 ;; each element being a pronunciation of the previous element.
 (defn pronunciations
   [s]
-  (letfn [(g [v] (mapcat #(conj [] (count %) (nth % 0)) (partition-by identity v)))]
+  (letfn [(g [v] (mapcat (juxt count first) (partition-by identity v)))]
     (iterate g (g s))))
 
 (fact (take 3 (pronunciations [1])) => [[1 1] [2 1] [1 2 1 1]])
