@@ -15,14 +15,7 @@
 ;; each element being a pronunciation of the previous element.
 (defn pronunciations
   [s]
-  (letfn [(g [[f & r]]
-            (let [m (reduce (fn [{:keys [c v l]} e]
-                              (if (= v e)
-                                {:c (+ 1 c) :v v :l l}
-                                {:c 1 :v e :l (conj l c v)}))
-                            {:c 1 :v f :l []}
-                            r)]
-              (conj (m :l) (m :c) (m :v))))]
+  (letfn [(g [v] (mapcat #(conj [] (count %) (nth % 0)) (partition-by identity v)))]
     (iterate g (g s))))
 
 (fact (take 3 (pronunciations [1])) => [[1 1] [2 1] [1 2 1 1]])
