@@ -17,23 +17,12 @@
   [s]
   (let [m (zipmap "IVXLCDM" [1 5 10 50 100 500 1000])
         [f & r] (reverse s)]
-    ((reduce
-      (fn [{:keys [s l]} e]
-        (if (< (m e) (m l))
-          {:s (- s (m e)) :l e}
-          {:s (+ s (m e)) :l e}))
-      {:s (m f) :l f}
-      r) :s)))
-
-;.;. {M 1000, D 500, C 100, L 50, X 10, V 5, I 1} [V (I X)]
-;.;. s 5 l V e I
-;.;. s 4 l I e X
-(fact 
-  (roman "XIV") => 14)
+    ((reduce (fn [{:keys [s l]} e] {:s ((if (< (m e) (m l)) - +) s (m e))  :l e}) {:s (m f) :l f} r) :s)))
 
 (fact
- (roman "DCCCXXVII") => 827
- (roman "MMMCMXCIX") => 3999
- (roman "XLVIII")  => 48)
+  (roman "XIV") => 14
+  (roman "DCCCXXVII") => 827
+  (roman "MMMCMXCIX") => 3999
+  (roman "XLVIII")  => 48)
 
 (println "--------- END 92  ----------" (java.util.Date.))
