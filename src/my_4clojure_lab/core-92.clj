@@ -17,7 +17,7 @@
   [s]
   (let [m (zipmap "IVXLCDM" [1 5 10 50 100 500 1000])
         [f & r] (reverse s)]
-    ((reduce (fn [{:keys [s l]} e] {:s ((if (< (m e) (m l)) - +) s (m e))  :l e}) {:s (m f) :l f} r) :s)))
+    ((reduce (fn [{:keys [s l]} e] {:s ((if (< (m e) (m l)) - +) s (m e)) :l e}) {:s (m f) :l f} r) :s)))
 
 (fact
   (roman "XIV") => 14
