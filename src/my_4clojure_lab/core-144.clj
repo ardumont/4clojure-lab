@@ -12,8 +12,7 @@
 
 (defn oscilrate
   [n & xf]
-  (let [f (cycle xf)]
-    (map second (iterate (fn [[r e]] [(inc r) ((nth f r) e)]) [0 n]))))
+  (reductions (fn [x f] (f x)) n (cycle xf)))
 
 (fact 
   (take 3 (oscilrate 3.14 int double)) => [3.14 3 3.0]
