@@ -13,9 +13,8 @@
 
 (defn formula
   [f m]
-  (let [g (fn g [o] (map #(if (seq? %) (g %) (m % %)) o))
-        r (g f)]
-    (eval r)))
+  (let [g (fn g [f m] (let [[h & x] (map #(if (seq? %) (g % m) (m % %)) f)] (apply h x)))]
+    (g f (assoc m '+ + '- - '/ / '* *))))
 
 (fact
   (formula '(/ a b) '{b 8 a 16}) => 2
