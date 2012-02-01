@@ -12,23 +12,19 @@
 ;; to their values.
 
 (defn formula
-  [f m]
-  (let [g (fn g [f m] (let [[h & x] (map #(if (seq? %) (g % m) (m % %)) f)] (apply h x)))]
-    (g f (assoc m '+ + '- - '/ / '* *))))
+  [f]
+  (fn [m]
+    (let [n (assoc m '+ + '- - '/ / '* *)
+          g (fn g [f]
+              (let [[o & a]
+                    (map #(if (seq? %) (g %) (n % %)) f)]
+                (apply o a)))]
+      (g f))))
 
 (fact
-  (formula '(/ a b) '{b 8 a 16}) => 2
-  (formula '(/ a (+ b b)) '{b 8 a 16}) => 1
-  (formula '(+ a b 2) '{a 2 b 4}) => 8
-  (formula '(/ (+ x 2) (* 3 (+ y 1))) '{x 4 y 1}) => 1)
-
-(fact
-  (formula '(* (+ 2 a) (- 10 b)) '{a 1 b 8}) => 6
-  (formula '(* (+ 2 a) (- 10 b)) '{b 5 a -2}) => 0
-  (formula '(* (+ 2 a) (- 10 b)) '{a 2 b 11}) => -4)
-
-(fact
-  (map
-   #(formula '(* (+ 2 a) (- 10 b)) %) '[{a 1 b 8} {b 5 a -2} {a 2 b 11}]) => [6 0 -4])
+  ((formula '(/ a b)) '{b 8 a 16}) => 2
+  ((formula '(+ a b 2)) '{a 2 b 4}) => 8
+  (map (formula '(* (+ 2 a) (- 10 b))) '[{a 1 b 8} {b 5 a -2} {a 2 b 11}]) => [6 0 -4]
+  ((formula '(/ (+ x 2) (* 3 (+ y 1)))) '{x 4 y 1}) => 1)
 
 (println "--------- END 121  ----------" (java.util.Date.))
