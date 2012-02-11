@@ -14,7 +14,29 @@
 ;; collection of vectors. The path should start at the top of the triangle and move to an adjacent number on the next
 ;; row until the bottom of the triangle is reached.
 
-(unfinished pf)
+(unfinished)
+
+(defn pf "Path from a coordinate c to the end of the triangle"
+  [[x y :as c] t]
+  (let [f (get-in t c)
+        c0 [(+ 1 x) y]
+        c1 [(+ 1 x) (+ 1 y)]
+        f0 (get-in t c0)
+        f1 (get-in t c1)]
+    (if f [[f f0] [f f1]])))
+
+;.;. It takes time to succeed because success is merely the natural reward of taking time to do anything well. -- Ross
+(fact "path from the coordinate"
+  (pf [0 0] [[:a]
+             [:b :c]]) => [[:a :b] [:a :c]])
+
+(future-fact "path from more complex"
+             (pf [0 0] [[:a]
+                        [:b :c]
+                        [:d :e :f]]) =>  [[:a :b :d]
+                                          [:a :b :e]
+                                          [:a :c :e]
+                                          [:a :c :f]])
 
 (defn min-path "Triangle minimal path"
   [t]
