@@ -14,39 +14,32 @@
 ;; collection of vectors. The path should start at the top of the triangle and move to an adjacent number on the next
 ;; row until the bottom of the triangle is reached.
 
-(unfinished)
+(unfinished routes)
 
 (defn pf "Path from a coordinate c to the end of the triangle"
-  [[x y :as c] t]
-  (let [f (get-in t c)
-        c0 [(+ 1 x) y]
-        c1 [(+ 1 x) (+ 1 y)]
-        f0 (get-in t c0)
-        f1 (get-in t c1)]
-    (if f [[f f0] [f f1]])))
+  [t]
+  (map #(map (fn [c] (get-in t c)) %) (routes t)))
 
-;.;. It takes time to succeed because success is merely the natural reward of taking time to do anything well. -- Ross
-(fact "path from the coordinate"
-  (pf [0 0] [[:a]
-             [:b :c]]) => [[:a :b] [:a :c]])
-
-(future-fact "path from more complex"
-             (pf [0 0] [[:a]
-                        [:b :c]
-                        [:d :e :f]]) =>  [[:a :b :d]
-                                          [:a :b :e]
-                                          [:a :c :e]
-                                          [:a :c :f]])
+(fact
+  (pf [[:a]
+       [:b :c]
+       [:d :e :f]]) => [[:a :b]
+                        [:a :c]]
+  (provided
+    (routes [[:a]
+             [:b :c]
+             [:d :e :f]]) => [[[0 0] [1 0]]
+                              [[0 0] [1 1]]]))
 
 (defn min-path "Triangle minimal path"
   [t]
-  (apply min (map #(apply + %) (pf [0 0] t))))
+  (apply min (map #(apply + %) (pf t))))
 
 (fact "Compute the minimal path"
   (min-path [:l0 :l1 :l2]) => 3
   (provided
-    (pf [0 0] [:l0 :l1 :l2]) => [[1 2 3]
-                                 [1 1 1]]))
+    (pf [:l0 :l1 :l2]) => [[1 2 3]
+                           [1 1 1]]))
 
 (future-fact  "IT"
   (min-path '([1]
