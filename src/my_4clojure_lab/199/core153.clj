@@ -14,44 +14,48 @@
 ;; bit tricky, so pay a little more attention to them.
 
 (defn pds? "pairwise disjoint sets?"
-  [s])
+  [s]
+  (let [a (reduce into [] s)
+        d (distinct a)]
+    (= (count a) (count d))))
 
 (fact 
-  (pds? #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}}) => true
+  (pds? #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}}) => true)
 
+(fact
   (pds? #{#{:a :b :c :d :e}
-        #{:a :b :c :d}
-        #{:a :b :c}
-        #{:a :b}
-        #{:a}}) => false
-
+          #{:a :b :c :d}
+          #{:a :b :c}
+          #{:a :b}
+          #{:a}}) => false)
+(fact
   (pds? #{#{[1 2 3] [4 5]}
-        #{[1 2] [3 4 5]}
-        #{[1] [2] 3 4 5}
-        #{1 2 [3 4] [5]}}) => true
-
+          #{[1 2] [3 4 5]}
+          #{[1] [2] 3 4 5}
+          #{1 2 [3 4] [5]}}) => true)
+(fact
   (pds? #{#{'a 'b}
-        #{'c 'd 'e}
-        #{'f 'g 'h 'i}
-        #{''a ''c ''f}}) => true
-
+          #{'c 'd 'e}
+          #{'f 'g 'h 'i}
+          #{''a ''c ''f}}) => true)
+(fact
   (pds? #{#{'(:x :y :z) '(:x :y) '(:z) '()}
-        #{#{:x :y :z} #{:x :y} #{:z} #{}}
-        #{'[:x :y :z] [:x :y] [:z] [] {}}}) => false
-
+          #{#{:x :y :z} #{:x :y} #{:z} #{}}
+          #{'[:x :y :z] [:x :y] [:z] [] {}}}) => false)
+(fact
   (pds? #{#{(= "true") false}
-        #{:yes :no}
-        #{(class 1) 0}
-        #{(symbol "true") 'false}
-        #{(keyword "yes") ::no}
-        #{(class '1) (int \0)}}) => false
-
+          #{:yes :no}
+          #{(class 1) 0}
+          #{(symbol "true") 'false}
+          #{(keyword "yes") ::no}
+          #{(class '1) (int \0)}}) => false)
+(fact
   (pds? #{#{distinct?}
-        #{#(-> %) #(-> %)}
-        #{#(-> %) #(-> %) #(-> %)}
-        #{#(-> %) #(-> %) #(-> %)}}) => true
-
+          #{#(-> %) #(-> %)}
+          #{#(-> %) #(-> %) #(-> %)}
+          #{#(-> %) #(-> %) #(-> %)}}) => true)
+(fact
   (pds? #{#{(#(-> *)) + (quote mapcat) #_ nil}
-        #{'+ '* mapcat (comment mapcat)}
-        #{(do) set contains? nil?}
-        #{, , , #_, , empty?}}) => false)
+          #{'+ '* mapcat (comment mapcat)}
+          #{(do) set contains? nil?}
+          #{, , , #_, , empty?}}) => false)
