@@ -15,9 +15,8 @@
 
 (defn pds? "pairwise disjoint sets?"
   [s]
-  (let [a (reduce into [] s)
-        d (distinct a)]
-    (= (count a) (count d))))
+  (let [a (reduce into [] s)]
+    (= (count a) (count (set a)))))
 
 (fact 
   (pds? #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}}) => true)
