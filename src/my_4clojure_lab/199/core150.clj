@@ -4,8 +4,6 @@
   (:use clojure.java.javadoc)
   (:use [midje.sweet]))
 
-
-
 ;; A palindromic number is a number that is the same when written forwards or backwards (e.g., 3, 99, 14341).
 
 ;; Write a function which takes an integer n, as its only argument, and returns an increasing lazy sequence of all
@@ -37,7 +35,7 @@
   ([n] (f n []))
   ([n s]
      (let [p (fn p [s] (or (nil? s) (and (= (first s) (last s)) (p (butlast (rest s))))))
-           l (lazy-seq (f (inc n)))]
+           l (lazy-seq (f (+ 1 n)))]
        (if (p (str n)) (cons n l) l))))
 
 (fact
@@ -61,10 +59,8 @@
 (fact
     (set (take 199 (f 0))) => (set (map #(first (f %)) (range 0 10000))))
 
-(future
+(fact
   (apply < (take 6666 (f 9999999))) => true)
 
-(future
+(fact
   (nth (f 0) 10101) => 9102019)
-
-
