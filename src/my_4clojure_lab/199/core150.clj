@@ -17,7 +17,7 @@
   [s]
   (or (nil? s) (and (= (first s) (last s)) (pal? (butlast (rest s))))))
 
-(fact
+(fact "pal?"
   (pal? [1 2 3]) => falsey
   (pal? [1 2 1]) => truthy
   (pal? "racecar") => truthy
@@ -25,7 +25,7 @@
   (pal? '(1 1 3 3 1 1))  => truthy
   (pal? '(:a :b :c)) => falsey)
 
-(defn f
+(defn f "first implementation"
   ([n] (f n []))
   ([n s]
      (let [p (fn p [s] (= (seq s) (reverse s)))
@@ -41,7 +41,7 @@
             x)]
     (= h (count l))))
 
-(fact
+(fact "p"
   (p "1") => true
   (p "teste") => false
   (p "11412") => false
@@ -60,8 +60,10 @@
                              :while (= (get s x) (get s (- n x 1)))]
                          x)]
                  (= h (count l))))
-           l (lazy-seq (f (+ 1 n) s))]
-       (if (p (str n)) (cons n l) l))))
+           g (fn g [n s]
+               (let [l (lazy-seq (g (+ 1 n) s))]
+                 (if (p (str n)) (cons n l) l)))]
+       (g n s))))
 
 (fact
   (take 26 (f 0)) => [0 1 2 3 4 5 6 7 8 9
@@ -81,7 +83,7 @@
 (fact
   (first (f (* 111111111 111111111))) => (* 111111111 111111111))
 
-(future-fact
+(fact
     (set (take 199 (f 0))) => (set (map #(first (f %)) (range 0 10000))))
 
 (future-fact
