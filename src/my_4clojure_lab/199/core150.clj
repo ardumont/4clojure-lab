@@ -12,6 +12,7 @@
 ;; The most simple solution will exceed the time limit!
 
 ;; from 4clojure.com/27 exercise
+
 (defn pal? "Is the sequence a palindrome?"
   [s]
   (or (nil? s) (and (= (first s) (last s)) (pal? (butlast (rest s))))))
@@ -24,18 +25,42 @@
   (pal? '(1 1 3 3 1 1))  => truthy
   (pal? '(:a :b :c)) => falsey)
 
-(defn g
-  ([n] (g n []))
+(defn f
+  ([n] (f n []))
   ([n s]
      (let [p (fn p [s] (= (seq s) (reverse s)))
-           l (lazy-seq (g (inc n)))]
+           l (lazy-seq (f (+ 1 n)))]
        (if (p (str n)) (cons n l) l))))
+
+(defn p "pal?"
+  [s]
+  (let [n (count s)
+        h (int (/ n 2))
+        l (for [x (range h)
+                :while (= (get s x) (get s (- n x 1)))]
+            x)]
+    (= h (count l))))
+
+(fact
+  (p "1") => true
+  (p "teste") => false
+  (p "11412") => false
+  (p "11111") => true
+  (p "111111") => true
+  (p "1234664321") => true
+  (p "1234550001") => false)
 
 (defn f
   ([n] (f n []))
   ([n s]
-     (let [p (fn p [s] (or (nil? s) (and (= (first s) (last s)) (p (butlast (rest s))))))
-           l (lazy-seq (f (+ 1 n)))]
+     (let [p (fn p [s]
+               (let [n (count s)
+                     h (int (/ n 2))
+                     l (for [x (range h)
+                             :while (= (get s x) (get s (- n x 1)))]
+                         x)]
+                 (= h (count l))))
+           l (lazy-seq (f (+ 1 n) s))]
        (if (p (str n)) (cons n l) l))))
 
 (fact
@@ -56,11 +81,11 @@
 (fact
   (first (f (* 111111111 111111111))) => (* 111111111 111111111))
 
-(fact
+(future-fact
     (set (take 199 (f 0))) => (set (map #(first (f %)) (range 0 10000))))
 
-(fact
+(future-fact
   (apply < (take 6666 (f 9999999))) => true)
 
-(fact
+(future-fact
   (nth (f 0) 10101) => 9102019)
