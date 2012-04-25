@@ -21,8 +21,7 @@
 
 (defn ins "Insert in the string w the character c at the index i"
   [w i c]
-  (let [v (vec w)]
-    (reduce str (concat (subvec v 0 i) [c] (subvec v i)))))
+  (str (subs w 0 i) c (subs w i)))
 
 (fact "ins"
   (ins "test" 3 \x) => "tesxt"
@@ -30,8 +29,7 @@
 
 (defn del "Given a string, remove the char at the given index"
   [w i]
-  (let [v (vec w)]
-    (reduce str (concat (subvec v 0 i) (subvec v (inc i))))))
+  (str (subs w 0 i) (subs w (inc i))))
 
 (fact
   (del "test" 0) => "est"
