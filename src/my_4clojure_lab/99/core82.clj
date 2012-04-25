@@ -111,7 +111,11 @@
                :d [:c]}) => [[:a :b :c] [:a :d :c]]
   (cp-from :a {:a [:b :d]
                :b [:c]
-               :d [:c :e]}) => [[:a :b :c] [:a :d :c] [:a :d :e]])
+               :d [:c :e]}) => [[:a :b :c] [:a :d :c] [:a :d :e]]
+  (cp-from :a {:a [:b :d]
+               :b [:c]
+               :d [:c :e]
+               :e [:c]}) => [[:a :b :c] [:a :d :c] [:a :d :c] [:a :d :e :c]])
 merge
 (defn wc? "word chains"
   [sw]
