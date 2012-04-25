@@ -103,7 +103,7 @@
 
 (defn cp-from "Compute all the paths possibles from the word w and all the paths p"
   [w p]
-  (map distinct (map #(let [rp (cp-from % (dissoc p w))] (concat [w %] rp)) (p w))))
+  (map #(let [rp (cp-from % (dissoc p w))] (concat [w %] rp)) (p w)))
 
 (fact "compute-path-from"
   (cp-from :a {:a [:b :d]
