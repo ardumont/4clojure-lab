@@ -48,7 +48,15 @@
   [n] (if (< n 10) [n] (conj (d (quot n 10)) (rem n 10))))
 
 (fact "d"
-  (d 100) => [1 0 0])
+  (d 100) => [1 0 0]
+  (d 132456677) => [1 3 2 4 5 6 6 7 7])
+
+(defn e "encode"
+  [s]
+  (reduce #(+ (* 10 %) %2) 0 s))
+
+(fact "encode"
+  (e [1 2 3]) => 123)
 
 (defn p "pal?"
   [s]
@@ -83,7 +91,45 @@
                  (if (p (d n)) (cons n l) l)))]
        (g n s))))
 
-(future-
+(defn nxpal "Next palindrome"
+  [n]
+  (let [s (d n)
+        l (count s)
+        h (quot l 2)
+        fh (take h s)
+        ifh (e fh)
+        nfh (-> fh e inc d)
+        sh (take-last h s)
+        ish (e sh)
+        m (s h)]
+    (cond
+     (and (even? l) (> ifh ish))  (e (concat fh (reverse fh)))
+     (and (even? l) (< m 9))      (e (concat nfh (reverse nfh)))
+     (even? l)                    (e (concat (butlast nfh) [0] (reverse (butlast nfh))))
+     (and (odd? l) (> ifh ish))   (e (concat fh [m] (reverse fh)))
+     (and (odd? l) (< m 9))       (e (concat fh [(inc m)] sh))
+     :else (e (concat nfh (reverse nfh))))))
+
+(fact
+  (nxpal 99) => 101
+  (nxpal 9999) => 10001)
+
+(fact
+  (nxpal 9) => 11
+  (nxpal 999) => 1001
+  (nxpal 121) => 131
+  (nxpal 120) => 121)
+
+;.;. Hey! You're green! Refactor then we get to go red again! -- @zspencer
+(fact "nxpal"
+  (nxpal 1) => 2
+  (nxpal 11) => 22
+  (nxpal 1111) => 1221
+  (nxpal 23) => 33
+  (nxpal 35) => 44
+  (nxpal 10) => 11)
+
+(future-fact
   (take 26 (f 0)) => [0 1 2 3 4 5 6 7 8 9
                       11 22 33 44 55 66 77 88 99
                       101 111 121 131 141 151 161]
