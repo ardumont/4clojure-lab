@@ -103,8 +103,19 @@
 
 (defn cp-from "Compute all the paths possibles from the word w and all the paths p"
   [w p]
-  (map #(let [rp (cp-from % (dissoc p w))] (concat [w %] rp)) (p w)))
+  (reduce #(conj % [w %2 (cp-from %2 (dissoc p w))]) [] (p w)))
 
+;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
+;.;.     Expected: [[:a :b :c] [:a :d :c]]
+;.;.       Actual: [[:a :b ()] [:a :d ()]]
+;.;. 
+;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
+;.;.     Expected: [[:a :b :c] [:a :d :c] [:a :d :e]]
+;.;.       Actual: [[:a :b ()] [:a :d ([:d :e ()])]]
+;.;. 
+;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
+;.;.     Expected: [[:a :b :c] [:a :d :c] [:a :d :e :c]]
+;.;.       Actual: [[:a :b ()] [:a :d ([:d :e ()])]]
 (fact "compute-path-from"
   (cp-from :a {:a [:b :d]
                :b [:c]
@@ -115,16 +126,13 @@
   (cp-from :a {:a [:b :d]
                :b [:c]
                :d [:c :e]
-               :e [:c]}) => [[:a :b :c] [:a :d :c] [:a :d :c] [:a :d :e :c]])
+               :e [:c]}) => [[:a :b :c] [:a :d :c] [:a :d :e :c]])
 merge
 (defn wc? "word chains"
   [sw]
   (let [p (reduce (fn [m e] (assoc m e (words e (set (remove #{e} sw))))) {} sw)
         cp (reduce (fn [v e] (concat v (cp-from e p))) [] sw)
         fcp (filter #(= (count sw) (count %)) cp)]
-    (println p)
-    (println cp)
-    (println fcp)
     (not= nil ((group-by count fcp) (count sw)))))
 
 (fact "wc? true"
