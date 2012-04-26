@@ -93,59 +93,65 @@
 
 (defn nxpal "Next palindrome"
   [n]
-  (if (= 9 n)
-    11
-    (let [s (d n)
-          l (count s)
-          h (quot l 2)
-          fh (take h s)
-          ifh (e fh)
-          nfh (-> fh e inc d)
-          sh (take-last h s)
-          ish (e sh)
-          m (s h)]
-#_      (println "n" n "fh" fh "sh" sh "nfh" nfh "ifh" ifh "ish" ish)
-      (cond
-       (and (even? l) (> ifh ish))  (e (concat fh (reverse fh)))
-       (and (even? l) (< m 9))      (e (concat nfh (reverse nfh)))
-       (even? l)                    (e (concat (butlast nfh) [0] (reverse (butlast nfh))))
-       (and (odd? l) (> ifh ish))   (e (concat fh [m] (reverse fh)))
-       (and (odd? l) (< m 9))       (e (concat fh [(inc m)] (reverse fh)))
-       :else                        (e (concat nfh [0] (reverse nfh)))))))
+  (let [c concat
+        r reverse
+        s (d n)
+        l (count s)
+        h (quot l 2)
+        fh (take h s)
+        ifh (e fh)
+        nfh (-> fh e inc d)
+        sh (take-last h s)
+        ish (e sh)
+        m (s h)
+        e? (even? l)
+        o? (odd? l)]
+    (e
+     (cond
+      (and e? (>= ifh ish))  (c fh (r fh))
+      e?                     (c nfh (r nfh))
+      (and o? (>= ifh ish))   (c fh [m] (r fh))
+      (and o? (< m 9))       (c fh [(inc m)] (r fh))
+      :else                  (c nfh [0] (r nfh))))))
+
+(fact
+  (nxpal 1234550000) => 1234664321)
+
+(fact
+  (nxpal 99) => 99
+  (nxpal 100) => 101
+  (nxpal 9999) => 9999
+  (nxpal 10000) => 10001)
 
 (fact "odd length - edge cases - switch to even length"
-  (nxpal 9) => 11
-  (nxpal 999) => 10001)
+  (nxpal 9) => 9
+  (nxpal 999) => 999)
 
 (fact "odd length - 9"
   (nxpal 193) => 202
-  (nxpal 191) => 202
+  (nxpal 191) => 191
   (nxpal 290) => 292
   (nxpal 295) => 303)
 
 (fact "odd length normal cases"
-  (nxpal 121) => 131
+  (nxpal 121) => 121
   (nxpal 120) => 121
-  (nxpal 161) => 171
+  (nxpal 161) => 161
   (nxpal 162) => 171
   (nxpal 13631) => 13731)
 
-(fact
-  (nxpal 99) => 101
-  (nxpal 9999) => 10001)
-
 (fact "nxpal"
-  (nxpal 0) => 1
-  (nxpal 1) => 2
-  (nxpal 11) => 22
-  (nxpal 1111) => 1221
+  (nxpal 0) => 0
+  (nxpal 1) => 1
+  (nxpal 11) => 11
+  (nxpal 1111) => 1111
   (nxpal 23) => 33
   (nxpal 35) => 44
   (nxpal 10) => 11)
 
 (defn gen-pal "Generate palindromes."
   [n]
-  (iterate nxpal n))
+  (iterate nxpal (if (pal? (d n)) n (nxpal n))))
 
 (future-fact
   (take 26 (gen-pal 0)) => [0 1 2 3 4 5 6 7 8 9
@@ -153,24 +159,19 @@
                             101 111 121 131 141 151 161])
 
 (future-fact
-  (take 30 (gen-pal 0)) => [0 1 2 3 4 5 6 7 8 9
-                            11 22 33 44 55 66 77 88 99
-                            101 111 121 131 141 151 161
-                            171 181 191 202])
-
-(future-fact
   (take 16 (gen-pal 162)) => [171 181 191 202
                               212 222 232 242
                               252 262 272 282
                               292 303 313 323])
-
 (future-fact
   (take 6 (gen-pal 1234550000)) => [1234554321 1234664321 1234774321
-                                    1234884321 1234994321 1235005321]
+                                    1234884321 1234994321 1235005321])
 
-  (first (gen-pal (* 111111111 111111111))) => (* 111111111 111111111)
+(future-fact
+  (first (gen-pal (* 111111111 111111111))) => (* 111111111 111111111))
 
-  (set (take 199 (gen-pal 0))) => (set (map #(first (gen-pal %)) (range 0 10000))))
+(future-fact
+  (=  (set (take 199 (gen-pal 0))) (set (map #(first (gen-pal %)) (range 0 10000)))) => true)
 
 (future-fact
   (apply < (take 6666 (gen-pal 9999999))) => true)
