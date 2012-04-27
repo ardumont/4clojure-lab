@@ -91,7 +91,7 @@
                  (if (p (d n)) (cons n l) l)))]
        (g n s))))
 
-(defn nxpal "Next palindrome"
+(defn nxp "Next palindrome"
   [n]
   (let [c concat
         r reverse
@@ -102,79 +102,107 @@
         ifh (e fh)
         nfh (-> fh e inc d)
         sh (take-last h s)
-        ish (e sh)
+        ish (-> sh r e)
         m (s h)
         e? (even? l)
-        o? (odd? l)]
+        o? (not e?)]
     (e
      (cond
-      (and e? (>= ifh ish))  (c fh (r fh))
-      e?                     (c nfh (r nfh))
-      (and o? (>= ifh ish))   (c fh [m] (r fh))
-      (and o? (< m 9))       (c fh [(inc m)] (r fh))
+      (and e? (< ifh ish))   (c nfh (r nfh))
+      e?                     (c fh (r fh))
+      (and o? (>= ifh ish))  (c fh [m] (r fh))
+      (and o? (< m 9))       (c fh [(+ 1 m)] (r fh))
       :else                  (c nfh [0] (r nfh))))))
 
-(fact
-  (nxpal 1234550000) => 1234664321)
+(fact "some limit cases that explicit my errors"
+  (nxp 1234500000) => 1234554321
+  (nxp 1234554321) => 1234554321
+  (nxp 1234554322) => 1234664321)
 
 (fact
-  (nxpal 99) => 99
-  (nxpal 100) => 101
-  (nxpal 9999) => 9999
-  (nxpal 10000) => 10001)
+  (nxp 99) => 99
+  (nxp 100) => 101
+  (nxp 9999) => 9999
+  (nxp 10000) => 10001)
 
 (fact "odd length - edge cases - switch to even length"
-  (nxpal 9) => 9
-  (nxpal 999) => 999)
+  (nxp 9) => 9
+  (nxp 999) => 999)
 
 (fact "odd length - 9"
-  (nxpal 193) => 202
-  (nxpal 191) => 191
-  (nxpal 290) => 292
-  (nxpal 295) => 303)
+  (nxp 193) => 202
+  (nxp 191) => 191
+  (nxp 290) => 292
+  (nxp 295) => 303)
 
 (fact "odd length normal cases"
-  (nxpal 121) => 121
-  (nxpal 120) => 121
-  (nxpal 161) => 161
-  (nxpal 162) => 171
-  (nxpal 13631) => 13731)
+  (nxp 121) => 121
+  (nxp 120) => 121
+  (nxp 161) => 161
+  (nxp 162) => 171
+  (nxp 13630) => 13631
+  (nxp 13631) => 13631
+  (nxp 13632) => 13731)
 
-(fact "nxpal"
-  (nxpal 0) => 0
-  (nxpal 1) => 1
-  (nxpal 11) => 11
-  (nxpal 1111) => 1111
-  (nxpal 23) => 33
-  (nxpal 35) => 44
-  (nxpal 10) => 11)
+(fact "nxp"
+  (nxp 0) => 0
+  (nxp 1) => 1
+  (nxp 11) => 11
+  (nxp 1111) => 1111
+  (nxp 23) => 33
+  (nxp 35) => 44
+  (nxp 10) => 11)
 
 (defn gen-pal "Generate palindromes."
   [n]
-  (iterate nxpal (if (pal? (d n)) n (nxpal n))))
+  (letfn
+      [(d [n] (if (< n 10) [n] (conj (d (quot n 10)) (rem n 10))))
+       (e [s] (reduce #(+ (* 10 %) %2) 0 s))
+       (p [n] (let [c concat
+                    r reverse
+                    s (d n)
+                    l (count s)
+                    h (quot l 2)
+                    F (take h s)
+                    ifh (e F)
+                    nfh (-> F e inc d)
+                    sh (take-last h s)
+                    ish (-> sh r e)
+                    m (s h)
+                    e? (even? l)
+                    o? (not e?)]
+                (e
+                 (cond
+                  (and e? (< ifh ish))   (c nfh (r nfh))
+                  e?                     (c F (r F))
+                  (and o? (>= ifh ish))  (c F [m] (r F))
+                  (and o? (< m 9))       (c F [(+ 1 m)] (r F))
+                  :else                  (c nfh [0] (r nfh))))))]
+    (iterate (comp p inc) (p n))))
 
-(future-fact
+(fact
   (take 26 (gen-pal 0)) => [0 1 2 3 4 5 6 7 8 9
                             11 22 33 44 55 66 77 88 99
                             101 111 121 131 141 151 161])
 
-(future-fact
+(fact
   (take 16 (gen-pal 162)) => [171 181 191 202
                               212 222 232 242
                               252 262 272 282
                               292 303 313 323])
-(future-fact
+
+(fact
   (take 6 (gen-pal 1234550000)) => [1234554321 1234664321 1234774321
                                     1234884321 1234994321 1235005321])
 
-(future-fact
+(fact
   (first (gen-pal (* 111111111 111111111))) => (* 111111111 111111111))
 
-(future-fact
+(fact
   (=  (set (take 199 (gen-pal 0))) (set (map #(first (gen-pal %)) (range 0 10000)))) => true)
 
-(future-fact
+(fact
   (apply < (take 6666 (gen-pal 9999999))) => true)
 
-(future-fact
+(fact
   (nth (gen-pal 0) 10101) => 9102019)
