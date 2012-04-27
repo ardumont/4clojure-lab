@@ -75,7 +75,7 @@
   (p [1 2 3 4 6 6 4 3 2 1]) => true
   (p [1 2 3 4 5 5 0 0 0 1]) => false)
 
-(defn f
+(defn gen-pal "Naive implementation"
   ([n] (f n []))
   ([n s]
      (letfn [(d [n] (if (< n 10) [n] (conj (d (quot n 10)) (rem n 10))))
@@ -91,28 +91,41 @@
                  (if (p (d n)) (cons n l) l)))]
        (g n s))))
 
-(defn nxp "Next palindrome"
-  [n]
-  (let [c concat
-        r reverse
-        s (d n)
-        l (count s)
-        h (quot l 2)
-        fh (take h s)
-        ifh (e fh)
-        nfh (-> fh e inc d)
-        sh (take-last h s)
-        ish (-> sh r e)
-        m (s h)
-        e? (even? l)
-        o? (not e?)]
-    (e
-     (cond
-      (and e? (< ifh ish))   (c nfh (r nfh))
-      e?                     (c fh (r fh))
-      (and o? (>= ifh ish))  (c fh [m] (r fh))
-      (and o? (< m 9))       (c fh [(+ 1 m)] (r fh))
-      :else                  (c nfh [0] (r nfh))))))
+(defn nxp "Next palindrome or the palindrome itself"
+  [n] (let [c concat           ;; alias the concat function
+            r reverse          ;; so is the reverse function
+            I (d n)            ;; I the potential palindrome in a number sequence
+            l (count I)        ;; length of the palindrome
+            h (quot l 2)       ;; the half of the sequence
+            F (take h I)       ;; First half of the sequence
+            f (-> F r e)       ;; first half number reversed
+            N (-> F e inc d)   ;; Next first half sequence
+            S (take-last h I)  ;; the Second half of the sequence
+            s (e S)            ;; the seconf half number
+            m (I h)            ;; the middle number
+            e? (even? l)       ;; is the length of the palindrome even?
+            o? (not e?)]       ;; opposite
+        (e
+         (cond
+          (and e? (< f s))   (c N (r N))            ;; 1882  -> (< 81 82)  -> (+ 1 18) -> 1991 
+          e?                 (c F (r F))            ;; 1880  -> (> 81 80)  -> 1881
+          (and o? (>= f s))  (c F [m] (r F))        ;; 13321 -> (>= 31 21) -> 13331 
+          (and o? (< m 9))   (c F [(+ 1 m)] (r F))  ;; 13332 -> (< 31 32)  -> 13431
+          :else              (c N [0] (r N))))))    ;; 13932 -> (and (< 31 32) (= 9 m)) -> 14041
+
+;.;. If this isn't nice, I don't know what is. -- Vonnegut
+(fact
+  (nxp 1882) => 1991
+  (nxp 1880) => 1881
+  (nxp 13321) => 13331
+  (nxp 13332) => 13431
+  (nxp 13932) => 14041)
+
+(fact
+  (nxp 9888) => 9889
+  (nxp 9889) => 9889
+  (nxp 9789) => 9889
+  (nxp 1882) => 1991)
 
 (fact "some limit cases that explicit my errors"
   (nxp 1234500000) => 1234554321
@@ -160,25 +173,28 @@
        (e [s] (reduce #(+ (* 10 %) %2) 0 s))
        (p [n] (let [c concat
                     r reverse
-                    s (d n)
-                    l (count s)
+                    I (d n)
+                    l (count I)
                     h (quot l 2)
-                    F (take h s)
-                    ifh (e F)
-                    nfh (-> F e inc d)
-                    sh (take-last h s)
-                    ish (-> sh r e)
-                    m (s h)
+                    F (take h I)
+                    f (-> F r e)
+                    N (-> F e inc d)
+                    S (take-last h I)
+                    s (e S)
+                    m (I h)
                     e? (even? l)
                     o? (not e?)]
                 (e
                  (cond
-                  (and e? (< ifh ish))   (c nfh (r nfh))
-                  e?                     (c F (r F))
-                  (and o? (>= ifh ish))  (c F [m] (r F))
-                  (and o? (< m 9))       (c F [(+ 1 m)] (r F))
-                  :else                  (c nfh [0] (r nfh))))))]
+                  (and e? (>= f s))  (c F (r F))
+                  e?                 (c N (r N))
+                  (and o? (>= f s))  (c F [m] (r F))
+                  (and o? (< m 9))   (c F [(+ 1 m)] (r F))
+                  :else              (c N [0] (r N))))))]
     (iterate (comp p inc) (p n))))
+
+(fact
+  (take 12 (gen-pal 8997)) => [8998 9009 9119 9229 9339 9449 9559 9669 9779 9889 9999 10001])
 
 (fact
   (take 26 (gen-pal 0)) => [0 1 2 3 4 5 6 7 8 9
@@ -199,7 +215,8 @@
   (first (gen-pal (* 111111111 111111111))) => (* 111111111 111111111))
 
 (fact
-  (=  (set (take 199 (gen-pal 0))) (set (map #(first (gen-pal %)) (range 0 10000)))) => true)
+  (= (set (take 199 (gen-pal 0)))
+     (set (map #(first (gen-pal %)) (range 0 10000)))) => true)
 
 (fact
   (apply < (take 6666 (gen-pal 9999999))) => true)
