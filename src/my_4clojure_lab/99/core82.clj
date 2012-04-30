@@ -101,39 +101,107 @@
   (words "oat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => #{"coat" "cat" "hat"}
   (words "coat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => #{"oat" "cat" "cot"})
 
-(defn cp-from "Compute all the paths possibles from the word w and all the paths p"
-  [w p]
-  (reduce #(conj % [w %2 (cp-from %2 (dissoc p w))]) [] (p w)))
+(defn neighbors "Given a graph g and a node n, return the node n's neighbors."
+  [g n]
+  (g n))
 
-;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
-;.;.     Expected: [[:a :b :c] [:a :d :c]]
-;.;.       Actual: [[:a :b ()] [:a :d ()]]
-;.;. 
-;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
-;.;.     Expected: [[:a :b :c] [:a :d :c] [:a :d :e]]
-;.;.       Actual: [[:a :b ()] [:a :d ([:d :e ()])]]
-;.;. 
-;.;. [31mFAIL[0m at (NO_SOURCE_FILE:1)
-;.;.     Expected: [[:a :b :c] [:a :d :c] [:a :d :e :c]]
-;.;.       Actual: [[:a :b ()] [:a :d ([:d :e ()])]]
+(fact
+  (neighbors {:a [:b :c] :b [] :c []} :a) => [:b :c])
+
+(defn lazy-walk
+  "Return a lazy sequence of the nodes of a graph starting a node n.
+  Optionally, provide a set of visited notes (v) and a collection of nodes to visit (ns)."
+  ([g n]
+     (lazy-walk g [n] #{}))
+  ([g ns v]
+     (lazy-seq (let [s (seq (drop-while v ns))
+                     n (first s)
+                     ns (rest s)]
+                 (when s
+                   (cons n (lazy-walk g (concat (g n) ns) (conj v n))))))))
+
+(fact "lazy-walk"
+ (lazy-walk {:a [:d :b]
+             :b [:c]} :a) => [:a :d :b :c]
+ (lazy-walk {:a [:d :b]
+             :b [:c]
+             :d [:e :c]} :a) => [:a :d :e :c :b])
+
+;; algo:
+;; (cp-from :a {:a [:b :d]
+;;              :b [:c]
+;;              :d [:c :e]
+;;              :e [:c]})
+
+;; not-visited stack [] already visited nodes #{}
+
+;; [:a]    #{}            []
+;; [:b :d] #{:a}          []
+;; [:c :d] #{:a :b}       []
+
+;; [:d]    #{:a :b :c}    []    :c has no children -> we will pop the stack,
+;;                              the node goes into the vector of paths,
+;;                              if the node owns children yet to be visited, the node stays in the stack of visited nodes
+;;         #{:a :b} =>    [:c]       :c no children
+;;         #{:a}    =>    [:c :b]    :b no more children left to visit
+;;         #{:a}    =>    [:c :b :a] :a still owns children to visit (:d)
+;; [:d]    #{:a}          [[:c :b :a]] (just to be clear, not a round, just a summary of the state)
+
+;; [:c :e] #{:a :d}       [[:c :b :a]]
+
+;; [:e]    #{:a :d :c}    [[:c :b :a]]  :c has no children...
+;;         #{:a :d}       [:c]
+;;         #{:a :d}       [:c :d]    :d still owns children to be visited
+;;         #{:a :d}       [:c :d :a]
+;; [:e]    #{:a :d}       [[:c :b :a] [:c :d :a]]
+
+;; [:c]    #{:a :d :e}    [[:c :b :a] [:c :d :a]]
+;; []      #{:a :d :e :c} [[:c :b :a] [:c :d :a]]
+
+;; [[:c :b :a] [:c :d :a] [:c :e :d :a]] -> all paths possibles from the tree.
+
+(defn cp-from "Compute all the possible paths from the word w and all the paths p"
+  [p w]
+  (loop [nv [w] v #{} m p rs []]
+    (if (empty? nv)
+      (concat rs (into [] v))
+      (let [n (peek nv)]
+        (if n
+          (let [c (m n)
+                ns (pop nv)
+                nnv (conj v n)]
+            (if c
+              (recur (into ns c) nnv (dissoc m n) rs)
+              (let [fv (set (filter #(some (set (p %)) ns) nnv))]
+                (recur ns fv m (conj rs (seq nnv))))))
+          rs)))))
+
 (fact "compute-path-from"
-  (cp-from :a {:a [:b :d]
-               :b [:c]
-               :d [:c]}) => [[:a :b :c] [:a :d :c]]
-  (cp-from :a {:a [:b :d]
-               :b [:c]
-               :d [:c :e]}) => [[:a :b :c] [:a :d :c] [:a :d :e]]
-  (cp-from :a {:a [:b :d]
-               :b [:c]
-               :d [:c :e]
-               :e [:c]}) => [[:a :b :c] [:a :d :c] [:a :d :e :c]])
-merge
+  (cp-from {:a [:b :d]
+            :b [:c]
+            :d [:c]} :a) => '((:a :c :d) (:a :c :b)))
+
+(fact
+  (cp-from {:a [:b :d]
+            :b [:c]
+            :d [:c :e]} :a) => '((:a :d :e) (:a :c :d) (:a :c :b)))
+
+(fact
+  (cp-from {:a [:b :d]
+            :b [:c]
+            :d [:c :e]
+            :e [:c]} :a) => '((:a :c :d :e) (:a :c :d :e) (:a :c :b)))
+
+(fact
+  (cp-from {"cot" ["hot"]
+            "hot" ["cot"]} "cot") => [["cot" "hot"]])
+
 (defn wc? "word chains"
   [sw]
   (let [p (reduce (fn [m e] (assoc m e (words e (set (remove #{e} sw))))) {} sw)
-        cp (reduce (fn [v e] (concat v (cp-from e p))) [] sw)
+        cp (mapcat #(cp-from p %) sw)
         fcp (filter #(= (count sw) (count %)) cp)]
-    (not= nil ((group-by count fcp) (count sw)))))
+    (not (empty? fcp))))
 
 (fact "wc? true"
   (wc? #{:w1 :w2 :w3}) => true
@@ -141,15 +209,15 @@ merge
     (words :w1 #{:w3 :w2}) => #{:w3}
     (words :w2 #{:w3 :w1}) => #{:w1}
     (words :w3 #{:w2 :w1}) => #{:w1 :w2}
-    (cp-from :w1 {:w1 #{:w3}
-                  :w2 #{:w1}
-                  :w3 #{:w1 :w2}}) => [[:w1 :w3 :w2] [:w1 :w3]]
-    (cp-from :w2 {:w1 #{:w3}
-                  :w2 #{:w1}
-                  :w3 #{:w1 :w2}}) => []
-    (cp-from :w3 {:w1 #{:w3}
-                  :w2 #{:w1}
-                  :w3 #{:w1 :w2}}) => []))
+    (cp-from {:w1 #{:w3}
+              :w2 #{:w1}
+              :w3 #{:w1 :w2}} :w1) => [[:w1 :w3 :w2] [:w1 :w3]]
+    (cp-from {:w1 #{:w3}
+              :w2 #{:w1}
+              :w3 #{:w1 :w2}} :w2) => []
+    (cp-from {:w1 #{:w3}
+              :w2 #{:w1}
+              :w3 #{:w1 :w2}} :w3) => []))
 
 (fact "wc? false"
   (wc? #{:w1 :w2 :w3}) => false
@@ -157,15 +225,19 @@ merge
     (words :w1 #{:w2 :w3}) => #{:w2}
     (words :w2 #{:w3 :w1}) => #{:w1}
     (words :w3 #{:w2 :w1}) => #{:w3}
-    (cp-from :w1 {:w1 #{:w2}
-                  :w2 #{:w1}
-                  :w3 #{:w3}}) => [[:w1 :w2] [:w1 :w2 :w3]]
-    (cp-from :w2 {:w1 #{:w2}
-                  :w2 #{:w1}
-                  :w3 #{:w3}}) => [[:w2 :w1]]
-    (cp-from :w3 {:w1 #{:w2}
-                  :w2 #{:w1}
-                  :w3 #{:w3}}) => [[:w3]]))
+    (cp-from {:w1 #{:w2}
+              :w2 #{:w1}
+              :w3 #{:w3}} :w1) => [[:w1 :w2] [:w1 :w2]]
+    (cp-from {:w1 #{:w2}
+              :w2 #{:w1}
+              :w3 #{:w3}} :w2) => [[:w2 :w1]]
+    (cp-from {:w1 #{:w2}
+              :w2 #{:w1}
+              :w3 #{:w3}} :w3) => [[:w3]]))
+
+;.;. The biggest reward for a thing well done is to have done it. -- Voltaire
+(fact
+ (wc? #{"cot" "hot"}) => true)
 
 (fact
   (wc? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => true)
