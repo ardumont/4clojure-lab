@@ -230,3 +230,52 @@
   (wc? #{"share" "hares" "hare" "are"}) => false)
 
 ;; version 4clojure
+
+(defn wc? "word-chains?"
+  [sw]
+  (letfn [(ins [w i c] (str (subs w 0 i) c (subs w i)))
+          (del [w i] (str (subs w 0 i) (subs w (inc i))))
+          (nw [] (map char (range 97 123)))
+          (oc? [w w2] (= 1 (count ((group-by identity (map #(= % %2) w w2)) false))))
+          (words-sub [w sw] (set (filter #(and (= (count %) (count w)) (oc? w %)) sw)))
+          (words-del [w] (set (for [i (range (count w))] (del w i))))
+          (words-add [w] (for [n (nw) i (range 0 (inc (count w)))] (ins w i n)))
+          (words [w sw] (filter sw (reduce into #{} [(words-add w) (words-del w) (words-sub w sw)])))
+          (cp-from [p w]
+            (loop [nv [w] v #{} m p rs []]
+              (if (empty? nv)
+                (concat rs (into [] v))
+                (let [n (peek nv)]
+                  (if n
+                    (let [c (m n)
+                          ns (pop nv)
+                          nnv (conj v n)]
+                      (if c
+                        (recur (into ns c) nnv (dissoc m n) rs)
+                        (let [fv (set (filter #(some (set (p %)) ns) nnv))]
+                          (recur ns fv m (conj rs (seq nnv))))))
+                    rs)))))
+          (w? [sw]
+            (let [p (reduce (fn [m e] (assoc m e (words e (set (remove #{e} sw))))) {} sw)
+                  cp (mapcat #(cp-from p %) sw)
+                  fcp (filter #(= (count sw) (count %)) cp)]
+              (not (empty? fcp))))]
+    (w? sw)))
+
+(fact
+  (wc? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => true)
+
+(fact
+  (wc? #{"cot" "hot" "bat" "fat"}) => false)
+
+(fact
+  (wc? #{"spout" "do" "pot" "pout" "spot" "dot"}) => true)
+
+(fact
+  (wc? #{"share" "hares" "shares" "hare" "are"}) => true)
+
+(fact
+  (wc? #{"to" "top" "stop" "tops" "toss"}) => false)
+
+(fact
+  (wc? #{"share" "hares" "hare" "are"}) => false)
