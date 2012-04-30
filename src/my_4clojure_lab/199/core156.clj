@@ -18,7 +18,7 @@
 
 (defn md "map default"
   [n c]
-  (apply assoc {} (interleave c (repeat (count c) n))))
+  (zipmap c (repeat (count c) n)))
 
 (fact
   (md 0 [:a :b :c]) => {:a 0 :b 0 :c 0}
