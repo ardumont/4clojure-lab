@@ -17,7 +17,9 @@
 ;; Write a function which takes a sequence of words, and returns true if they can be arranged into one continous word
 ;; chain, and false if they cannot.
 
-(unfinished diff)
+;; version tdd
+
+(unfinished)
 
 (defn ins "Insert in the string w the character c at the index i"
   [w i c]
@@ -226,3 +228,5 @@
 
 (fact
   (wc? #{"share" "hares" "hare" "are"}) => false)
+
+;; version 4clojure
