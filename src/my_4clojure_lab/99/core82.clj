@@ -87,45 +87,19 @@
 
 (defn words "Compute all the possibles words from a word when removing or adding or subsituting a letter.x"
   [w sw]
-  (clojure.set/intersection sw (reduce into #{} [(words-add w) (words-del w) (words-sub w sw)])))
+  (filter sw (reduce into #{} [(words-add w) (words-del w) (words-sub w sw)])))
 
 (fact "mock - words"
-  (words :w #{:w1 :w2 :w3 :w4 :w5}) => #{:w1 :w2 :w3 :w4}
+  (words :w #{:w1 :w2 :w3 :w4 :w5}) => (contains [:w1 :w2 :w3 :w4] :in-any-order)
   (provided
     (words-add :w) => #{:w1 :w2}
     (words-del :w) => #{:w3}
     (words-sub :w #{:w1 :w2 :w3 :w4 :w5}) => #{:w4}))
 
 (fact "ITest - words"
-  (words "hat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => #{"oat" "hot" "cat"}
-  (words "oat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => #{"coat" "cat" "hat"}
-  (words "coat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => #{"oat" "cat" "cot"})
-
-(defn neighbors "Given a graph g and a node n, return the node n's neighbors."
-  [g n]
-  (g n))
-
-(fact
-  (neighbors {:a [:b :c] :b [] :c []} :a) => [:b :c])
-
-(defn lazy-walk
-  "Return a lazy sequence of the nodes of a graph starting a node n.
-  Optionally, provide a set of visited notes (v) and a collection of nodes to visit (ns)."
-  ([g n]
-     (lazy-walk g [n] #{}))
-  ([g ns v]
-     (lazy-seq (let [s (seq (drop-while v ns))
-                     n (first s)
-                     ns (rest s)]
-                 (when s
-                   (cons n (lazy-walk g (concat (g n) ns) (conj v n))))))))
-
-(fact "lazy-walk"
- (lazy-walk {:a [:d :b]
-             :b [:c]} :a) => [:a :d :b :c]
- (lazy-walk {:a [:d :b]
-             :b [:c]
-             :d [:e :c]} :a) => [:a :d :e :c :b])
+  (words "hat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => (contains "oat" "hot" "cat" :in-any-order)
+  (words "oat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => (contains "coat" "cat" "hat" :in-any-order)
+  (words "coat" #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => (contains "oat" "cat" "cot" :in-any-order))
 
 ;; algo:
 ;; (cp-from :a {:a [:b :d]
@@ -234,10 +208,6 @@
     (cp-from {:w1 #{:w2}
               :w2 #{:w1}
               :w3 #{:w3}} :w3) => [[:w3]]))
-
-;.;. The biggest reward for a thing well done is to have done it. -- Voltaire
-(fact
- (wc? #{"cot" "hot"}) => true)
 
 (fact
   (wc? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"}) => true)
