@@ -22,7 +22,7 @@
 ;; which wins the trick. Cards will be represented in the format returned by Problem 128, Recognize Playing Cards: a
 ;; hash-map of :suit and a numeric :rank. Cards with a larger rank are stronger.
 
-(defn trump ""
+(defn trump "Given a suit s to be trump suit (or nil for none), returns a function able to determinate the winner card on a set of cards."
   [s]
   (fn [v]
     (let [s (if s s (:suit (nth v 0)))]
