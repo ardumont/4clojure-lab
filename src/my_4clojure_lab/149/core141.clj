@@ -25,10 +25,8 @@
 (defn trump ""
   [s]
   (fn [v]
-    (let [f (nth v 0)
-          s (if s s (:suit f))]
-      (reduce (fn [m e]
-                (if (and (= s (:suit e)) (< (:rank m) (:rank e))) e m)) f v))))
+    (let [s (if s s (:suit (nth v 0)))]
+      (apply max-key :rank (filter #(= s (:suit %)) v)))))
 
 (fact
   (let [notrump (trump nil)]
