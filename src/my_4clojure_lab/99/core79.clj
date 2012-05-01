@@ -67,6 +67,24 @@
                      [2 1] {:v 5 :c [] :s 5}
                      [2 2] {:v 6 :c [] :s 6}})
 
+(defn nb "Given a coordinate vector, return the neighbours for this v."
+  [[y x] l]
+  (if (= l y)
+    []
+    [[(+ 1 y) x] [(+ 1 y) (+ 1 x)]]))
+(defn ct "Compute the neighbours"
+  [t]
+  (let [l (count t)
+        c (count (last t))]
+    (reduce
+     (fn [m c]
+       (let [v (get-in t c)
+             l1 (- l 1)]
+         (assoc m c {:v v :c (nb c l1) :s v})))
+     {}
+     (for [y (range l)
+           x (range c)
+           :when (<= x y)] [y x]))))
 (defn cm "Find the minimal sum route."
   ([t cd]
      (letfn [(cmm [t cd]
@@ -104,6 +122,49 @@
 (defn min-path "Triangle minimal path"
   [t]
   (cm (ct (vec t)) [0 0]))
+
+(fact "IT"
+  (min-path '([1]
+                [2 4]
+                [5 1 4]
+                [2 3 4 5])) => 7)       ; 1->2->1->3
+
+(fact
+  (min-path '([3]
+                [2 4]
+                [1 9 3]
+                [9 9 2 4]
+                [4 6 6 7 8]
+                [5 7 3 5 1 4])) => 20)  ; 3->4->3->2->7->1
+
+
+;; 4clojure function
+
+(defn min-path "Triangle minimal path"
+  [t]
+  (letfn [(nb [[y x] l] (if (= l y) [] [[(+ 1 y) x] [(+ 1 y) (+ 1 x)]]))
+          (ct [t]
+            (let [l (count t)
+                  c (count (last t))]
+              (reduce (fn [m c]
+                        (let [v (get-in t c)
+                              l1 (- l 1)]
+                          (assoc m c {:v v :c (nb c l1) :s v})))
+                      {}
+                      (for [y (range l)
+                            x (range c)
+                            :when (<= x y)] [y x]))))
+          (cmm [t cd]
+            (let [{:keys [v c s]} (t cd)]
+              (if (empty? c)
+                [s]
+                (mapcat (fn [ncd]
+                          (let [sc (:s ncd)
+                                vc (:v ncd)]
+                            (if (= sc vc) ;; first visit?
+                              (cmm (update-in t [ncd :s] (fn [s1] (+ s s1))) ncd)
+                              (cmm (update-in t [ncd :s] (fn [s1] (min s1 (+ v s)))) ncd)))) c))))]
+    (apply min (cmm (ct (vec t)) [0 0]))))
 
 (fact "IT"
   (min-path '([1]
