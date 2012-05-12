@@ -17,7 +17,7 @@
 
 (defn decurry
   [g]
-  (fn [a b] ((g a) b)))
+  (fn [& args] ((g (first args)) (second args))))
 
 (fact
   ((decurry (fn [a]
