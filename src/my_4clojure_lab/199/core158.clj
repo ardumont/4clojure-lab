@@ -12,11 +12,19 @@
 ;; Write a function that accepts a curried function of unknown arity n. Return an equivalent function of n arguments.
 ;; You may wish to read http://en.wikipedia.org/wiki/Currying
 
+;; (f [a b c] (+ a b c))             ----- curry   -----> (fn [a] (fn [b] (fn [c] (+ a b c))))
+;; (fn [a] (fn [b] (fn [c] (+ a b c)))) ----- uncurry -----> (f [a b c] (+ a b c))
+
 (defn decurry
-  [f]
-  f)
+  [g]
+  (fn [a b] ((g a) b)))
 
 (fact
+  ((decurry (fn [a]
+              (fn [b]
+                (* a b)))) 5 5) => 25)
+
+(future-fact
   ((decurry (fn [a]
               (fn [b]
                 (fn [c]
@@ -27,8 +35,4 @@
               (fn [b]
                 (fn [c]
                   (fn [d]
-                    (* a b c d)))))) 1 2 3 4) => 24
-
-  ((decurry (fn [a]
-              (fn [b]
-                (* a b)))) 5 5) => 25)
+                    (* a b c d)))))) 1 2 3 4) => 24)
