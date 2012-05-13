@@ -17,14 +17,18 @@
 
 (defn decurry
   [g]
-  (fn [& args] ((g (first args)) (second args))))
+  (fn [& a]
+    (loop [n (count a) r g s a]
+      (if (= 0 n)
+        r
+        (recur (dec n) (r (first s)) (rest s))))))
 
 (fact
   ((decurry (fn [a]
               (fn [b]
                 (* a b)))) 5 5) => 25)
 
-(future-fact
+(fact
   ((decurry (fn [a]
               (fn [b]
                 (fn [c]
