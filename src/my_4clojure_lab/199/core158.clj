@@ -17,8 +17,7 @@
 
 (defn decurry
   [g]
-  (fn [& a]
-    (reduce #(% %2) g a)))
+  #(reduce (fn [f a] (f a)) g %&))
 
 (fact
   ((decurry (fn [a]
