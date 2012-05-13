@@ -18,10 +18,7 @@
 (defn decurry
   [g]
   (fn [& a]
-    (loop [n (count a) r g s a]
-      (if (= 0 n)
-        r
-        (recur (dec n) (r (first s)) (rest s))))))
+    (reduce #(% %2) g a)))
 
 (fact
   ((decurry (fn [a]
