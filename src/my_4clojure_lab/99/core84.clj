@@ -16,12 +16,18 @@
 
 (defn tc-simple "Transitive closure for one element in the set"
   [[a b :as v] s]
-  (let [f (fn [b] (filter (fn [[x y]] (= b x)) s))
-        all (map #(f (second %)) (f b))]
+  (let [f (fn [[u d]] (filter (fn [[x y]] (= d x)) s))
+        d (f v)
+        all (concat d (mapcat f d))]
     (set (map (fn [[x y]] [a y]) all))))
 
 (fact "tc-simple"
-  (tc-simple [:a :b] #{[:b :c] [:d :e] [:a :b] [:b :f]}) => #{[:a :c] [:a :f]}
+  (tc-simple [:a :b] #{[:a :b]
+                       [:b :c]
+                       [:b :f]
+                       [:d :e]}) => #{[:a :c] [:a :f]})
+
+(fact
   (tc-simple [:a :b] #{[:a :b] [:b :c] [:c :e]}) => #{[:a :c] [:a :e]})
 
 (defn tc "Transitive closure"
@@ -34,7 +40,7 @@
     (tc-simple :a #{:a :b}) => #{:c}
     (tc-simple :b #{:a :b}) => #{:d}))
 
-(future-fact "tc"
+(fact "tc"
   (tc #{[8 4] [9 3] [4 2] [27 9]}) => #{[4 2] [8 4] [8 2] [9 3] [27 9] [27 3]}
 
   (tc #{["cat" "man"] ["man" "snake"] ["spider" "cat"]}) => #{["cat" "man"] ["cat" "snake"] ["man" "snake"]
