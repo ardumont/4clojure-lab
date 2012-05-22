@@ -20,19 +20,21 @@
         all (map #(f (second %)) (f b))]
     (set (map (fn [[x y]] [a y]) all))))
 
-(defn tc-simple "Transitive closure for one element in the set"
-  [[a b :as v] s]
-  (set (map (fn [[x y]] [a y]) (filter (fn [[x y]] (= b x)) s))))
-
 (fact "tc-simple"
   (tc-simple [:a :b] #{[:b :c] [:d :e] [:a :b] [:b :f]}) => #{[:a :c] [:a :f]}
   (tc-simple [:a :b] #{[:a :b] [:b :c] [:c :e]}) => #{[:a :c] [:a :e]})
 
 (defn tc "Transitive closure"
   [s]
-  (set (concat s (mapcat #(tc-simple % s) s))))
+  (into s (mapcat #(tc-simple % s) s)))
 
 (fact "tc"
+  (tc #{:a :b}) => #{:a :b :c :d}
+  (provided
+    (tc-simple :a #{:a :b}) => #{:c}
+    (tc-simple :b #{:a :b}) => #{:d}))
+
+(future-fact "tc"
   (tc #{[8 4] [9 3] [4 2] [27 9]}) => #{[4 2] [8 4] [8 2] [9 3] [27 9] [27 3]}
 
   (tc #{["cat" "man"] ["man" "snake"] ["spider" "cat"]}) => #{["cat" "man"] ["cat" "snake"] ["man" "snake"]
