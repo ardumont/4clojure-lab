@@ -56,8 +56,8 @@
   (letfn [(t [[a b :as v] s]
             (let [f (fn [[u d]] (filter (fn [[x y]] (= d x)) s))
                   d (f v)
-                  all (concat d (mapcat f d))]
-              (set (map (fn [[x y]] [a y]) all))))]
+                  o (concat d (mapcat f d))]
+              (map (fn [[x y]] [a y]) o)))]
     (into s (mapcat #(t % s) s))))
 
 (fact "tc"
