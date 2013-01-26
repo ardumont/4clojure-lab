@@ -17,9 +17,9 @@
             (fn [[[a b] & r :as l] e]
               (condp = e
                 b       l
-                (+ 1 b) (cons [a e] r)
-                        (cons [e e] l)))
-            `([~f ~f]))
+                (+ 1 b) (conj r [a e])
+                        (conj l [e e])))
+            [[f f]])
            reverse)
       v)))
 
