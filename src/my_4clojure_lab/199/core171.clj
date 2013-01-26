@@ -1,16 +1,25 @@
 (ns ^{:doc "http://www.4clojure.com/problem/171#prob-title"}
   my-4clojure-lab.199.core171
   (:use [clojure.java.javadoc]
-        [midje.sweet]))
+        [midje.sweet])
+  (:require [clojure.tools.trace :as t]))
 
 ;; Write a function that takes a sequence of integers and returns a sequence of "intervals".
 ;; Each interval is a a vector of two integers, start and end, such that all integers between start and end (inclusive)
 ;; are contained in the input sequence.
 
 (defn intervals
-  [s])
+  [v]
+  (let [[f & t] (sort v)]
+    (reduce
+     (fn [[[_ b] & r :as l] e]
+       (if (= (+ 1 b) e)
+         (cons [f e] r)
+         (cons [e e] l)))
+     `([~f ~f])
+     t)))
 
-(future-fact (intervals [1 2 3]) => [[1 3]])
+(fact (intervals [1 2 3]) => [[1 3]])
 
 (future-fact (intervals [10 9 8 1 2 3]) => [[1 3] [8 10]])
 
