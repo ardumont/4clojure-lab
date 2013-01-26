@@ -20,8 +20,7 @@
                 (+ 1 b) (cons [a e] r)
                         (cons [e e] l)))
             `([~f ~f]))
-           reverse
-           distinct)
+           reverse)
       v)))
 
 (fact (intervals [1 2 3]) => [[1 3]])
