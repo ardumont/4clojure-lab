@@ -11,15 +11,15 @@
   [v]
   (let [[f & t] (sort v)]
     (if f
-      (->> t
-           (reduce
-            (fn [[[a b] & r :as l] e]
-              (condp = e
-                b       l
-                (+ 1 b) (conj r [a e])
-                        (conj l [e e])))
-            [[f f]])
-           reverse)
+      (reverse
+       (reduce
+        (fn [[[a b] & r :as l] e]
+          (condp = e
+            b       l
+            (+ 1 b) (conj r [a e])
+                    (conj l [e e])))
+        [[f f]]
+        t))
       v)))
 
 (fact (intervals [1 2 3]) => [[1 3]])
