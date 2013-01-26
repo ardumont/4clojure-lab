@@ -2,9 +2,7 @@
   my-4clojure-lab.149.core121
   (:use clojure.repl)
   (:use clojure.java.javadoc)
-  (:use [midje.sweet]))
-
-
+  (:use [midje.sweet :only [fact]]))
 
 ;; Given a mathematical formula in prefix notation, return a function that calculates the value of the formula. The
 ;; formula can contain nested calculations using the four basic mathematical operators, numeric constants, and symbols
@@ -26,5 +24,3 @@
   ((formula '(+ a b 2)) '{a 2 b 4}) => 8
   (map (formula '(* (+ 2 a) (- 10 b))) '[{a 1 b 8} {b 5 a -2} {a 2 b 11}]) => [6 0 -4]
   ((formula '(/ (+ x 2) (* 3 (+ y 1)))) '{x 4 y 1}) => 1)
-
-

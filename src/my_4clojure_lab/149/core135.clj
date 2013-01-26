@@ -20,10 +20,8 @@
   [x & r]
   (reduce (fn [e [op l]] (op e l)) x (partition 2 r)))
 
-(fact 
+(fact
   (compute 2 + 5) => 7
   (compute 38 + 48 - 2 / 2) => 42
   (compute 10 / 2 - 1 * 2) => 8
   (compute 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9) => 72)
-
-
