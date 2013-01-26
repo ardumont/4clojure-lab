@@ -18,13 +18,14 @@
               (cons [a e] r)
               (cons [e e] l)))
           `([~f ~f]))
-         reverse)))
+         reverse
+         distinct)))
 
 (fact (intervals [1 2 3]) => [[1 3]])
 
 (fact (intervals [10 9 8 1 2 3]) => [[1 3] [8 10]])
 
-(future-fact (intervals [1 1 1 1 1 1 1]) => [[1 1]])
+(fact (intervals [1 1 1 1 1 1 1]) => [[1 1]])
 
 (future-fact (intervals []) => [])
 
