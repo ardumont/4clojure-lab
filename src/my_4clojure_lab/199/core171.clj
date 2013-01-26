@@ -15,10 +15,10 @@
       (->> t
            (reduce
             (fn [[[a b] & r :as l] e]
-              (cond
-               (= b e)       l
-               (= (+ 1 b) e) (cons [a e] r)
-               :else         (cons [e e] l)))
+              (condp = e
+                b       l
+                (+ 1 b) (cons [a e] r)
+                        (cons [e e] l)))
             `([~f ~f]))
            reverse
            distinct)
