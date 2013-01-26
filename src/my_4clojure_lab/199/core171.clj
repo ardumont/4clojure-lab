@@ -11,17 +11,18 @@
 (defn intervals
   [v]
   (let [[f & t] (sort v)]
-    (reduce
-     (fn [[[_ b] & r :as l] e]
-       (if (= (+ 1 b) e)
-         (cons [f e] r)
-         (cons [e e] l)))
-     `([~f ~f])
-     t)))
+    (->> t
+         (reduce
+          (fn [[[a b] & r :as l] e]
+            (if (= (+ 1 b) (t/trace :e e))
+              (cons [a e] r)
+              (cons [e e] l)))
+          `([~f ~f]))
+         reverse)))
 
 (fact (intervals [1 2 3]) => [[1 3]])
 
-(future-fact (intervals [10 9 8 1 2 3]) => [[1 3] [8 10]])
+(fact (intervals [10 9 8 1 2 3]) => [[1 3] [8 10]])
 
 (future-fact (intervals [1 1 1 1 1 1 1]) => [[1 1]])
 
