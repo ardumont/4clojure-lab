@@ -24,22 +24,16 @@
 ;; returns the finite s-by-t matrix that consists of the first t entries of each of the first s rows of the matrix B or,
 ;; equivalently, that consists of the first s entries of each of the first t columns of the matrix B.
 
-(defn it
-  [f n]
-  (cons n (lazy-seq (it f (f n)))))
-
-(defn rg
-  []
-  (it (partial + 1) 0))
-
-(defn infinity "For solving the problem."
+(defn infinity
   ([f] ;; [f r c | r <-[0..], c <-[0..]]
-     (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg)))
+     (letfn [(it [f n] (cons n (lazy-seq (it f (f n)))))
+             (rg [] (it (partial + 1) 0))]
+       (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg))))
   ([f m n] ;; removal of the first m rows, and the first n columns from (infinity f)
      (->> (infinity f)
           (map #(drop n %))
           (drop m)))
-  ([f m n s t];; first t columns and s first rows from (infinity f m n)
+  ([f m n s t] ;; first t columns and s first rows from (infinity f m n)
      (->> (infinity f m n)
           (map #(take t %))
           (take s))))
