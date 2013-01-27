@@ -33,9 +33,12 @@
   (it (partial + 1) 0))
 
 (defn infinity "For solving the problem."
-  ([f]
-     (map (fn [i] (map (fn [j] (f i j)) (rg))) (rg)))
-  ([f m n])
+  ([f] ;; [f r c | r <-[0..], c <-[0..]]
+     (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg)))
+  ([f m n] ;; removal of the first m rows, and the first n columns
+     (->> (infinity f)
+          (map #(drop n %))
+          (drop m)))
   ([f m n s t]))
 
 (fact
@@ -45,7 +48,7 @@
                                                 ["30" "31" "32" "33" "34" "35"]
                                                 ["40" "41" "42" "43" "44" "45"]])
 
-(future-fact
+(fact
   (take 6 (map #(take 5 %) (infinity str 3 2))) => [["32" "33" "34" "35" "36"]
                                                     ["42" "43" "44" "45" "46"]
                                                     ["52" "53" "54" "55" "56"]
