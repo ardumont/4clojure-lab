@@ -30,9 +30,10 @@
              (rg [] (it (partial + 1) 0))]
        (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg))))
   ([f m n] ;; removal of the first m rows, and the first n columns from (infinity f)
-     (->> (infinity f)
-          (map #(drop n %))
-          (drop m)))
+     (let [dp #(->> %2 (split-at %) second)]
+       (->> (infinity f)
+            (map (fn [c] (dp n c)))
+            (dp m))))
   ([f m n s t] ;; first t columns and s first rows from (infinity f m n)
      (->> (infinity f m n)
           (map #(take t %))
