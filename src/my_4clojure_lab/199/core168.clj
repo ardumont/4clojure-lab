@@ -35,11 +35,11 @@
 (defn infinity "For solving the problem."
   ([f] ;; [f r c | r <-[0..], c <-[0..]]
      (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg)))
-  ([f m n] ;; removal of the first m rows, and the first n columns
+  ([f m n] ;; removal of the first m rows, and the first n columns from (infinity f)
      (->> (infinity f)
           (map #(drop n %))
           (drop m)))
-  ([f m n s t]
+  ([f m n s t];; first t columns and s first rows from (infinity f m n)
      (->> (infinity f m n)
           (map #(take t %))
           (take s))))
