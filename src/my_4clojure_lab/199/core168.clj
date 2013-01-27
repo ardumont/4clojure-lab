@@ -39,7 +39,10 @@
      (->> (infinity f)
           (map #(drop n %))
           (drop m)))
-  ([f m n s t]))
+  ([f m n s t]
+     (->> (infinity f m n)
+          (map #(take t %))
+          (take s))))
 
 (fact
   (take 5 (map #(take 6 %) (infinity str))) => [["00" "01" "02" "03" "04" "05"]
@@ -56,31 +59,31 @@
                                                     ["72" "73" "74" "75" "76"]
                                                     ["82" "83" "84" "85" "86"]])
 
-(future-fact
+(fact
   (infinity * 3 5 5 7) => [[15 18 21 24 27 30 33]
                            [20 24 28 32 36 40 44]
                            [25 30 35 40 45 50 55]
                            [30 36 42 48 54 60 66]
                            [35 42 49 56 63 70 77]])
 
-(future-fact (infinity #(/ % (inc %2)) 1 0 6 4) => [[1/1 1/2 1/3 1/4]
+(fact (infinity #(/ % (inc %2)) 1 0 6 4) => [[1/1 1/2 1/3 1/4]
                                              [2/1 2/2 2/3 1/2]
                                              [3/1 3/2 3/3 3/4]
                                              [4/1 4/2 4/3 4/4]
                                              [5/1 5/2 5/3 5/4]
                                              [6/1 6/2 6/3 6/4]])
 
-(future-fact
+(fact
   (= (class (infinity (juxt bit-or bit-xor)))
      (class (infinity (juxt quot mod) 13 21))
      (class (lazy-seq))) => truthy)
 
-(future-fact
+(fact
   (= (class (nth (infinity (constantly 10946)) 34))
      (class (nth (infinity (constantly 0) 5 8) 55))
      (class (lazy-seq))) => truthy)
 
-(future-fact (let [m 377 n 610 w 987
+(fact (let [m 377 n 610 w 987
             check (fn [f s] (every? true? (map-indexed f s)))
             row (take w (nth (infinity vector) m))
             column (take w (map first (infinity vector m n)))
