@@ -24,20 +24,21 @@
 ;; returns the finite s-by-t matrix that consists of the first t entries of each of the first s rows of the matrix B or,
 ;; equivalently, that consists of the first s entries of each of the first t columns of the matrix B.
 
-(defn infinity
-  ([f] ;; [f r c | r <-[0..], c <-[0..]]
-     (letfn [(it [f n] (cons n (lazy-seq (it f (f n)))))
-             (rg [] (it (partial + 1) 0))]
-       (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg))))
-  ([f m n] ;; removal of the first m rows, and the first n columns from (infinity f)
-     (let [dp #(->> %2 (split-at %) second)]
+(letfn [(it [f n] (cons n (lazy-seq (it f (f n))))) ;; iterate
+        (rg [] (it (partial + 1) 0))                ;; range
+        (dp [n c] (->> c (split-at n) second))]     ;; drop
+
+  (defn infinity
+    ([f] ;; [f r c | r <-[0..], c <-[0..]]
+       (map (fn [r] (map (fn [c] (f r c)) (rg))) (rg)))
+    ([f m n] ;; removal of the first m rows, and the first n columns from (infinity f)
        (->> (infinity f)
             (map (fn [c] (dp n c)))
-            (dp m))))
-  ([f m n s t] ;; first t columns and s first rows from (infinity f m n)
-     (->> (infinity f m n)
-          (map #(take t %))
-          (take s))))
+            (dp m)))
+    ([f m n s t] ;; first t columns and s first rows from (infinity f m n)
+       (->> (infinity f m n)
+            (map #(take t %))
+            (take s)))))
 
 (fact
   (take 5 (map #(take 6 %) (infinity str))) => [["00" "01" "02" "03" "04" "05"]
