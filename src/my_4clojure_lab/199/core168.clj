@@ -24,10 +24,21 @@
 ;; returns the finite s-by-t matrix that consists of the first t entries of each of the first s rows of the matrix B or,
 ;; equivalently, that consists of the first s entries of each of the first t columns of the matrix B.
 
-(defn infinity "For solving the problem."
-  [])
+(defn it
+  [f n]
+  (cons n (lazy-seq (it f (f n)))))
 
-(future-fact
+(defn rg
+  []
+  (it (partial + 1) 0))
+
+(defn infinity "For solving the problem."
+  ([f]
+     (map (fn [i] (map (fn [j] (f i j)) (rg))) (rg)))
+  ([f m n])
+  ([f m n s t]))
+
+(fact
   (take 5 (map #(take 6 %) (infinity str))) => [["00" "01" "02" "03" "04" "05"]
                                                 ["10" "11" "12" "13" "14" "15"]
                                                 ["20" "21" "22" "23" "24" "25"]
