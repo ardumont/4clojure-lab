@@ -16,23 +16,24 @@
 ;; Find the shortest path through the "maze". Because there are multiple shortest paths, you must return the length of the shortest path, not the path itself.
 
 (defn mkc
-  [{:keys [s e d]}]
-  (let [vf [#(/ % 2) (partial * 2) (partial + 2)]]
+  [{:keys [s d]}]
+  (let [[_ & r :as vf] [/ * + ]]
     (map
-     (fn [f] {:s (f s) :e e :d (+ 1 d)})
-     (if (even? s) vf (rest vf)))))
+     (fn [f] {:s (f s 2)
+             :d (+ 1 d)})
+     (if (even? s) vf r))))
 
 (fact
-  (mkc {:s 10 :e 20 :d 1}) => (contains {:s 5 :e 20 :d 2}
-                                        {:s 20 :e 20 :d 2}
-                                        {:s 12 :e 20 :d 2}
-                                        :in-any-order)
-  (mkc {:s 9 :e 20 :d 1}) => [{:s 18 :e 20 :d 2}
-                              {:s 11 :e 20 :d 2}])
+  (mkc {:s 10 :d 1}) => (contains {:s 5 :d 2}
+                                  {:s 20 :d 2}
+                                  {:s 12 :d 2}
+                                  :in-any-order)
+  (mkc {:s 9 :d 1}) => [{:s 18 :d 2}
+                        {:s 11 :d 2}])
 
 (defn bfs
   "breadth-first search lazily"
-  ([s e] (bfs {:s s :e e :d 1}))
+  ([s e] (bfs {:s s :d 1}))
   ([t]
       ((fn nx [q]
          (lazy-seq
@@ -43,8 +44,8 @@
        (conj clojure.lang.PersistentQueue/EMPTY t))))
 
 (fact
-  (take 1 (bfs 1 10)) => '({:s 1 :e 10 :d 1})
-  (take 4 (bfs 2 3)) => '({:s 2 :e 3, :d 1} {:s 1 :e 3, :d 2} {:s 4, :e 3, :d 2} {:s 4, :e 3, :d 2}))
+  (take 1 (bfs 1 10)) => '({:s 1 :d 1})
+  (take 4 (bfs 2 3)) => '({:s 2 :d 1} {:s 1 :d 2} {:s 4 :d 2} {:s 4 :d 2}))
 
 (defn maze
   [s e]
@@ -53,7 +54,7 @@
     (->>
      (bfs s e)
      (drop-while
-      #(not= (:s %) (:e %)))
+      #(not= (:s %) e))
      first
      :d)))
 
