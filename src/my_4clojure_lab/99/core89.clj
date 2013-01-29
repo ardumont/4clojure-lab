@@ -1,4 +1,4 @@
-(ns my-4clojure-lab.149.core89
+(ns my-4clojure-lab.99.core89
   "http://www.4clojure.com/problem/89#prob-title"
   (:use [midje.sweet :only [future-fact fact contains exactly]])
   (:require [clojure.tools.trace :as t]))
