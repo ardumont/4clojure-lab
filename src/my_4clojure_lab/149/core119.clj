@@ -10,7 +10,7 @@
 
 ;; Board coordinates should be as in calls to get-in. For example, [0 1] is the topmost row, center position.
 
-(defn win?
+(defn w?
   [b]
   (letfn [(w [[[a b c]
                [d e f]
@@ -26,15 +26,15 @@
           (w b :o) :o
           :else nil)))
 
-(defn win
-  [p b]
-  (let [n (-> b first count)]
-    (->> (for [x (range n) y (range n)] [(get-in b [x y]) [x y]])
-         (filter (fn [[e _]] (= :e e)))
-         (map (fn [[_ v]] [(win? (assoc-in b v p)) v]))
-         (filter (fn [[w _]] (= p w)))
-         (map second)
-         (into #{}))))
+(defn win [p b]
+  (let [n (-> b first count)
+        r (range n)]
+    (set (for [x r
+               y r
+               :let [v [x y]
+                     e (get-in b v)]
+               :when (and (= :e e) (= p (-> b (assoc-in v p) w?)))]
+           v))))
 
 (fact (win :x [[:o :e :e]
                [:o :x :o]
