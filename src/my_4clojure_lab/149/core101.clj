@@ -16,7 +16,38 @@
 
 ;; WARNING: Some of the test cases may timeout if you write an inefficient solution!
 
+(comment ;; first implementation using the reverse string
+  (defn lv
+    [a b]
+    (letfn
+        [(L [[f & r :as x] [h & t :as y]]
+           (let [l (count x)
+                 m (count y)]
+             (cond (= 0 l) m
+                   (= 0 m) l
+                   (= f h) (L r t)
+                   :else (+ 1 (min (L x t)
+                                   (L r y)
+                                   (L r t))))))]
+      (L (-> a vec rseq) (-> b vec rseq)))))
+
+(comment ;; improve on the first implementation to compute the count only once
+  (defn lv
+    [a b]
+    (letfn
+        [(L [[f & r :as x] l [h & t :as y] m]
+           (let [l- (- l 1)
+                 m- (- m 1)]
+             (cond (= 0 l) m
+                   (= 0 m) l
+                   (= f h) (L r l- t m-)
+                   :else (+ 1 (min (L x l t m-)
+                                   (L r l- y m)
+                                   (L r l- t m-))))))]
+      (L (-> a vec rseq) (count a) (-> b vec rseq) (count b)))))
+
 (defn lv
+  "Compute the levenshtein distance"
   [a b]
   (let [x (vec a)
         y (vec b)]
@@ -30,39 +61,7 @@
                    :else (+ 1 (min (L l m-)
                                    (L l- m)
                                    (L l- m-))))))]
-      (L (count a) (count b)))))
-
-(comment
-  (defn lv
-    [a b]
-    (letfn
-        [(L [[f & r :as x] l [h & t :as y] m]
-           (cond (= 0 l) m
-                 (= 0 m) l
-                 (= f h) (L r (- l 1) t (- m 1))
-                 :else (+ 1 (min (L x l t (- m 1))
-                                 (L r (- l 1) y m)
-                                 (L h (- l 1) t (- m 1))))))]
-      (L (reverse (vec a)) (count a) (reverse (vec b)) (count b)))))
-
-(comment
-  (defn lv
-    [a b]
-    (letfn
-        [(L [[f & r :as x] [h & t :as y]]
-           (t/trace :x x)
-           (t/trace :y y)
-           (let [l (count x)
-                 m (count y)]
-             (t/trace :lx l)
-             (t/trace :ly m)
-             (cond (= 0 l) m
-                   (= 0 m) l
-                   (= f h) (L r t)
-                   :else (+ 1 (min (L x t)
-                                   (L r y)
-                                   (L h t))))))]
-      (L (reverse a) (reverse b)))))
+      (L (count x) (count y)))))
 
 (fact
   (lv "kitten" "sitting")               => 3
@@ -74,6 +73,8 @@
   (lv "" "")                            => 0
   (lv  [] [] )                          => 0
   (lv [1 2 3 4] [0 2 3 4 5])            => 2
-  (lv '(:a :b :c :d) '(:a :d))          => 2
-  (lv "ttttattttctg" "tcaaccctaccat")   => 10
-  (lv "gaattctaatctc" "caaacaaaaaattt") => 9)
+  (lv '(:a :b :c :d) '(:a :d))          => 2)
+
+(fact
+ (lv "ttttattttctg" "tcaaccctaccat")   => 10
+ (lv "gaattctaatctc" "caaacaaaaaattt") => 9)
