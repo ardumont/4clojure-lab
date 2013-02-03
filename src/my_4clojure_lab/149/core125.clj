@@ -15,6 +15,22 @@
 
 ;(define function define data)
 
-((fn [x] (str (list x (list (quote quote) x)))) (quote (fn [x] (str (list x (list (quote quote) x))))))
+((fn []
+   (str ((fn [x] (list x (list (quote quote) x)))
+         (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x)))))))))))
 
-(= (str 's) (s))
+
+(comment ;; I'm not crazy, this works :D but 4clojure is not satisfied
+  (eval "((fn [] (str ((fn [x] (list x (list (quote quote) x))) (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x)))))))))))")
+        "((fn [] (str ((fn [x] (list x (list (quote quote) x))) (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x)))))))))))")
+
+(fact
+  (str ((fn [] (str ((fn [x] (list x (list (quote quote) x)))
+                    (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x))))))))))))
+  => "((fn [] (str (quote (fn [x] (list x (list (quote quote) x)))))) (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x))))))))")
+
+;; does not work for 4clojure
+(= (str '(fn [] (str ((fn [x] (list x (list (quote quote) x)))
+                     (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x)))))))))))
+   ((fn [] (str ((fn [x] (list x (list (quote quote) x)))
+                (quote (fn [] (str (quote (fn [x] (list x (list (quote quote) x))))))))))))
