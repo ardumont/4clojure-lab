@@ -13,14 +13,7 @@
 
 ;; Fun fact: Gus is the name of the 4Clojure dragon.
 
-;(define function define data)
+((fn [] (let [s "(fn [] (let [s %s] (format s s s)))"] (format s s s))))
 
-((fn [] (str ((fn [x] (list x (list (quote quote) x)))          '(fn [] (str ((fn [x] (list x (list (quote quote) x))))))))))
-
-;; does not work for 4clojure
-(= (str '(fn []
-           (str ((fn [x] (list x (list (quote quote) x)))
-                 (quote (fn [] (str ((fn [x] (list x (list (quote quote) x)))))))))))
-   ((fn []
-      (str ((fn [x] (list x (list (quote quote) x)))
-            (quote (fn [] (str ((fn [x] (list x (list (quote quote) x))))))))))))
+(= (str '(fn [] (let [s "(fn [] (let [s \"%s\"] (format s s s)))"] (format s s s))))
+   ((fn [] (let [s "(fn [] (let [s \"%s\"] (format s s s)))"] (format s s s)))))
