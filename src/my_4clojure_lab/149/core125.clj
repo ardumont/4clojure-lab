@@ -13,7 +13,7 @@
 
 ;; Fun fact: Gus is the name of the 4Clojure dragon.
 
-((fn [] (let [s "(fn [] (let [s %s] (format s s s)))"] (format s s s))))
+((fn [x] (str x x)) '(fn [x] (str x x)))
 
-(= (str '(fn [] (let [s "(fn [] (let [s \"%s\"] (format s s s)))"] (format s s s))))
-   ((fn [] (let [s "(fn [] (let [s \"%s\"] (format s s s)))"] (format s s s)))))
+(= (str '(fn [x] (str x x)) '(fn [x] (str x x)))
+   ((fn [x] (str x x)) '(fn [x] (str x x))))
