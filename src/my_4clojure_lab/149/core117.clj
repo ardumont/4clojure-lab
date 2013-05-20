@@ -14,8 +14,62 @@ Your function must return true iff the maze is solvable by the mouse."
         [clojure.java.javadoc])
   (:require [midje.sweet :as m]))
 
+(defn nbs
+  "Compute the possible neighbours of a cell."
+  [[y x]]
+  (let [x- (dec x)
+        x+ (inc x)
+        y- (dec y)
+        y+ (inc y)]
+    (->> [[y- x] [y+ x] [y x+] [y x-]] ;; N S E W
+         (filter (fn [[y x]] (and (<= 0 x) (<= 0 y)))))))
+
+(m/fact
+  (nbs [0 0]) => (m/just [0 1] [1 0] :in-any-order)
+  (nbs [1 1]) => (m/just [1 0] [1 2] [0 1] [2 1] :in-any-order))
+
+(defn next-move
+  "Given a cell, compute the next possible move from such cell."
+  [[y x :as c] maze]
+  (->> c
+       nbs
+       (filter (comp #{\space \C} (partial get-in maze)))))
+
+(m/fact
+  (next-move [0 0] ["M   C"]) => [[0 1]]
+  (next-move [0 0] ["M   C"
+                    " #   "]) => (m/just [1 0] [0 1] :in-any-order)
+  (next-move [2 2] ["     "
+                    "  #  "
+                    " #M# "
+                    "  # C"]) => [])
+
+(defn mouse
+  [maze]
+  (let [r (-> maze first count)
+        c (-> maze count)]
+    (first
+     (for [x (range r)
+           y (range c)
+           :when (= \M (get-in maze [y x]))]
+       [y x]))))
+
+(m/fact
+  (mouse ["M   C"]) => [0 0]
+  (mouse ["#######"
+          "#     #"
+          "#  #  #"
+          "#M # C#"
+          "#######"]) => [3 1]
+  (mouse ["C######"
+          " #     "
+          " #   # "
+          " #   #M"
+          "     # "]) => [3 6])
+
 (defn solve
-  [maze])
+  [maze]
+  )
 
 (m/fact
   (solve ["M   C"]) => true
