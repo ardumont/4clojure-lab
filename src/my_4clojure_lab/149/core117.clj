@@ -23,24 +23,29 @@ Your function must return true iff the maze is solvable by the mouse."
 
 (defn nbs
   "Compute the possible neighbours of a cell."
-  [[y x]]
-  (let [x- (dec x)
+  [maze [y x]]
+  (let [r (-> maze first count)
+        c (-> maze count)
+        x- (dec x)
         x+ (inc x)
         y- (dec y)
         y+ (inc y)]
     (->> [[y- x] [y+ x] [y x+] [y x-]] ;; N S E W
-         (filter (fn [[y x]] (and (<= 0 x) (<= 0 y)))))))
+         (filter (fn [[y x]] (and (<= 0 x) (<= 0 y) (< x r) (< y c)))))))
 
 (m/fact
-  (nbs [0 0]) => (m/just [0 1] [1 0] :in-any-order)
-  (nbs [1 1]) => (m/just [1 0] [1 2] [0 1] [2 1] :in-any-order))
+  (nbs [" M# C"
+        "     "] [0 0]) => (m/just [0 1] [1 0] :in-any-order)
+  (nbs [" M# C"
+        "     "] [1 1]) => (m/just [1 0] [1 2] [0 1] :in-any-order))
 
 (defn nxm
   "Given a cell, compute the next possible move from such cell."
   [maze [y x :as c]]
-  (->> c
-       nbs
-       (filter (comp #{\space \C} (partial get-in maze)))))
+  (let []
+    (->> c
+         (nbs maze)
+         (filter (comp #{\space \C} (partial get-in maze))))))
 
 (m/fact
   (nxm [" M# C"] [0 1]) => [[0 0]]
@@ -97,6 +102,187 @@ Your function must return true iff the maze is solvable by the mouse."
            " #   #M"
            "     # "]) => [0 0])
 
+(defn range-y
+  [[cy _] [dy _]]
+  (let [d (- dy cy)]
+    (cond (pos? d)  (->> dy inc (range cy))
+          (neg? d) (->> cy inc (range dy))
+          :else     [])))
+
+(m/fact
+  (range-y [5 0] [10 0])  => (range 5 11)
+  (range-y [10 0] [5 0])  => (range 5 11)
+  (range-y [10 0] [10 0]) => [])
+
+(defn cleanup-fr
+  "Cleanup the first row if all first row begin with #"
+  [maze]
+  (if (->> maze
+           (map first)
+           (every? #{\#}))
+    (->> maze
+         (map (comp (partial clojure.string/join "") (partial drop 1))))
+    maze))
+
+(m/fact
+  (cleanup-fr ["#######"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["######"
+                               "     #"
+                               "  #  #"
+                               "M # C#"
+                               "######"]
+  (cleanup-fr ["###  ##"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["##  ##"
+                               "     #"
+                               "  #  #"
+                               "M # C#"
+                               "######"])
+
+(defn cleanup-lr
+  "Cleanup the first row if all first row begin with #"
+  [maze]
+  (let [l (-> maze first count)]
+    (if (->> maze
+             (map last)
+             (every? #{\#}))
+      (->> maze
+           (map (comp (partial clojure.string/join "") (partial drop l))))
+      maze)))
+
+(m/fact
+  (cleanup-lr ["#######"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["######"
+                               "#     "
+                               "#  #  "
+                               "#M # C"
+                               "######"]
+  (cleanup-lr ["###  ##"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["###  #"
+                               "#     "
+                               "#  #  "
+                               "#M # C"
+                               "######"])
+
+(defn cleanup-fc
+  [maze]
+  (if (->> maze
+           first
+           (every? #{\#}))
+    (drop 1 maze)
+    maze))
+
+(m/fact
+  (cleanup-fc ["#######"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["#     #"
+                               "#  #  #"
+                               "#M # C#"
+                               "#######"]
+  (cleanup-fc ["###  ##"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["###  ##"
+                               "#     #"
+                               "#  #  #"
+                               "#M # C#"
+                               "#######"])
+
+(defn cleanup-lc
+  [maze]
+  (if (->> maze
+           last
+           (every? #{\#}))
+    (drop-last maze)
+    maze))
+
+(m/fact
+  (cleanup-lc ["#######"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "#######"]) => ["#######"
+                               "#     #"
+                               "#  #  #"
+                               "#M # C#"]
+  (cleanup-lc ["###  ##"
+               "#     #"
+               "#  #  #"
+               "#M # C#"
+               "###  ##"]) => ["###  ##"
+                               "#     #"
+                               "#  #  #"
+                               "#M # C#"
+                               "###  ##"])
+(defn cleanup
+  [maze]
+  (->> maze
+       cleanup-fc
+       cleanup-lc))
+
+(m/fact
+  (cleanup ["#######"
+            "#      "
+            "   #  #"
+            "#M # C#"
+            "#######"]) => ["#      "
+                            "   #  #"
+                            "#M # C#"])
+
+(defn to-y?
+  "Given a cell with coordinate [cy _], is this possible to simply go to the [dy _]?"
+  [maze [cy _ :as c] [dy _ :as d]]
+  (if (= cy dy)
+    true
+    (let [r (range-y (mouse maze) (cheese maze))]
+      (->> r
+           (map (fn [v] (->> [v]
+                            (get-in maze)
+                            (filter #{\space})
+                            (some #{\space}))))
+           (every? #{\space})))))
+
+(m/fact
+  (to-y? ["#######"
+          "#     #"
+          "#  #  #"
+          "#M # C#"
+          "#######"] [3 0] [3 5]) => true
+  (to-y? ["#######"
+          "# M   #"
+          "#  #  #"
+          "#  # C#"
+          "#######"] [1 2] [3 5]) => true
+  (to-y? ["#######"
+          "# M   #"
+          "#######"
+          "#  # C#"
+          "#######"] [1 2] [3 5]) => false
+  (to-y? ["#######"
+          "# M   #"
+          "##### #"
+          "#  # C#"
+          "#######"] [1 2] [3 5]) => true
+  (to-y? ["#######"
+          "# M   #"
+          " ######"
+          "#  # C#"
+          "#######"] [1 2] [3 5]) => false)
+
 (defn solve
   [mz]
   (->> [(mouse mz)]
@@ -138,7 +324,7 @@ Your function must return true iff the maze is solvable by the mouse."
          "#  #   #"
          "#  #  C#"
          "########"]) => false
- (solve ["M     "
+ (psolve ["M     "
          "      "
          "      "
          "      "
