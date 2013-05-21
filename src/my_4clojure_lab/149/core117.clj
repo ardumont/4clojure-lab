@@ -37,48 +37,69 @@ Your function must return true iff the maze is solvable by the mouse."
 
 (defn next-move
   "Given a cell, compute the next possible move from such cell."
-  [[y x :as c] maze]
+  [maze [y x :as c]]
   (->> c
        nbs
        (filter (comp #{\space \C} (partial get-in maze)))))
 
 (m/fact
-  (next-move [0 0] ["M   C"]) => [[0 1]]
-  (next-move [0 0] ["M   C"
-                    " #   "]) => (m/just [1 0] [0 1] :in-any-order)
-  (next-move [2 2] ["     "
-                    "  #  "
-                    " #M# "
-                    "  # C"]) => [])
+  (next-move ["M   C"]  [0 0]) => [[0 1]]
+  (next-move ["M   C"
+              " #   "] [0 0]) => (m/just [1 0] [0 1] :in-any-order)
+  (next-move ["     "
+              "  #  "
+              " #M# "
+              "  # C"] [2 2]) => [])
 
-(defn mouse
-  [maze]
+(defn get-character
+  "Given a maze and a character, return its coordinates in the maze."
+  [maze character]
   (let [r (-> maze first count)
         c (-> maze count)]
-    (first
-     (for [x (range r)
-           y (range c)
-           :when (= \M (get-in maze [y x]))]
-       [y x]))))
+    (for [x (range r)
+          y (range c)
+          :when (= character (get-in maze [y x]))]
+      [y x])))
 
 (m/fact
-  (mouse ["M   C"]) => [0 0]
+  (get-character ["M   C"] \M)   => [[0 0]]
+  (get-character ["M   C"] \C)   => [[0 4]])
+
+(def mouse #(get-character % \M))
+
+(m/fact
+  (mouse ["M   C"])   => [[0 0]]
   (mouse ["#######"
           "#     #"
           "#  #  #"
           "#M # C#"
-          "#######"]) => [3 1]
+          "#######"]) => [[3 1]]
   (mouse ["C######"
           " #     "
           " #   # "
           " #   #M"
-          "     # "]) => [3 6])
+          "     # "]) => [[3 6]])
+
+(def cheese #(get-character % \C))
+
+(m/fact
+  (cheese ["M   C"])   => [0 4]
+  (cheese ["#######"
+           "#     #"
+           "#  #  #"
+           "#M # C#"
+           "#######"]) => [3 5]
+  (cheese ["C######"
+           " #     "
+           " #   # "
+           " #   #M"
+           "     # "]) => [0 0])
 
 (defn solve
   [maze]
-  )
+)
 
-(m/fact
+(m/future-fact
   (solve ["M   C"]) => true
   (solve ["M # C"]) => false
   (solve ["#######"
