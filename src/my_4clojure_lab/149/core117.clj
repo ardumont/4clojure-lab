@@ -314,21 +314,14 @@ Your function must return true iff the maze is solvable by the mouse."
   (if (= cx dx)
     true
     (let [r (range-x (mouse maze) (cheese maze))
-          m (->> maze
-                 (map (fn [s] (map (partial get s) r)))
-                 (map (partial map #{\space \C \M})))]
-      (or
-       (->> m
-            (map (partial some nil?))
-            (every? true?)
-            not)
-       (->> m
-            (map (partial every? identity))
-            (some true?)
-            true?)))))
+          m (for [x r]
+              (map (comp #{\space \C \M} #(get-in % [x])) maze))]
+      (->> (for [x (-> m first count range)]
+             (map #(nth % x) m))
+           (apply map (fn [& v] (some #{\C \M \space} v)))
+           (every? identity)))))
 
 (m/fact
-  (to-x? ["M # C"] [0 0] [0 4])   => false
   (to-x? ["     "
           "  #  "
           "M # C"] [2 0] [2 4])   => true
@@ -345,16 +338,19 @@ Your function must return true iff the maze is solvable by the mouse."
           "#####"
           "  # C"] [0 1] [2 4])   => true
   (to-x? [" M # "
-          "#####"
-          "  # C"] [0 1] [2 4])   => false
-  (to-x? [" M # "
           "## ##"
           "    C"] [0 1] [2 4])   => true
   (to-x? ["C######"
           " #     "
           " #   # "
           " #   #M"
-          "     # "] [3 6] [0 0]) => true
+          "     # "] [3 6] [0 0]) => true)
+
+(m/fact
+  (to-x? ["M # C"] [0 0] [0 4])   => false
+  (to-x? [" M # "
+          "#####"
+          "  # C"] [0 1] [2 4])   => false
   (to-x? ["########"
           "#M  #  #"
           "#   #  #"
