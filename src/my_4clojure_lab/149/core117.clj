@@ -14,6 +14,13 @@ Your function must return true iff the maze is solvable by the mouse."
         [clojure.java.javadoc])
   (:require [midje.sweet :as m]))
 
+(defn pp
+  "Simple maze pretty printing"
+  [maze]
+  (->> maze
+       (map println)
+       dorun))
+
 (defn nbs
   "Compute the possible neighbours of a cell."
   [[y x]]
