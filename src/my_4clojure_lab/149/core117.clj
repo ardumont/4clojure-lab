@@ -14,7 +14,7 @@ Your function must return true iff the maze is solvable by the mouse."
         [clojure.java.javadoc])
   (:require [midje.sweet :as m]))
 
-(defn pp
+(defn p
   "Simple maze pretty printing"
   [maze]
   (->> maze
@@ -35,7 +35,7 @@ Your function must return true iff the maze is solvable by the mouse."
   (nbs [0 0]) => (m/just [0 1] [1 0] :in-any-order)
   (nbs [1 1]) => (m/just [1 0] [1 2] [0 1] [2 1] :in-any-order))
 
-(defn next-move
+(defn nxm
   "Given a cell, compute the next possible move from such cell."
   [maze [y x :as c]]
   (->> c
@@ -43,42 +43,44 @@ Your function must return true iff the maze is solvable by the mouse."
        (filter (comp #{\space \C} (partial get-in maze)))))
 
 (m/fact
-  (next-move ["M   C"]  [0 0]) => [[0 1]]
-  (next-move ["M   C"
-              " #   "] [0 0]) => (m/just [1 0] [0 1] :in-any-order)
-  (next-move ["     "
-              "  #  "
-              " #M# "
-              "  # C"] [2 2]) => [])
+  (nxm [" M# C"] [0 1]) => [[0 0]]
+  (nxm ["M   C"] [0 0]) => [[0 1]]
+  (nxm ["M   C"
+        " #   "] [0 0]) => (m/just [1 0] [0 1] :in-any-order)
+  (nxm ["     "
+        "  #  "
+        " #M# "
+        "  # C"] [2 2]) => [])
 
 (defn get-character
   "Given a maze and a character, return its coordinates in the maze."
   [maze character]
   (let [r (-> maze first count)
         c (-> maze count)]
-    (for [x (range r)
-          y (range c)
-          :when (= character (get-in maze [y x]))]
-      [y x])))
+    (first
+     (for [x (range r)
+           y (range c)
+           :when (= character (get-in maze [y x]))]
+       [y x]))))
 
 (m/fact
-  (get-character ["M   C"] \M)   => [[0 0]]
-  (get-character ["M   C"] \C)   => [[0 4]])
+  (get-character ["M   C"] \M)   => [0 0]
+  (get-character ["M   C"] \C)   => [0 4])
 
 (def mouse #(get-character % \M))
 
 (m/fact
-  (mouse ["M   C"])   => [[0 0]]
+  (mouse ["M   C"])   => [0 0]
   (mouse ["#######"
           "#     #"
           "#  #  #"
           "#M # C#"
-          "#######"]) => [[3 1]]
+          "#######"]) => [3 1]
   (mouse ["C######"
           " #     "
           " #   # "
           " #   #M"
-          "     # "]) => [[3 6]])
+          "     # "]) => [3 6])
 
 (def cheese #(get-character % \C))
 
@@ -96,38 +98,26 @@ Your function must return true iff the maze is solvable by the mouse."
            "     # "]) => [0 0])
 
 (defn solve
-  [maze]
-)
+  [mz]
+  (->> [(mouse mz)]
+       (iterate (partial mapcat (partial nxm mz)))
+       (mapcat (partial map (comp #{\C} (partial get-in mz))))
+       (drop-while nil?)
+       first
+       (= \C)))
 
-(m/future-fact
-  (solve ["M   C"]) => true
-  (solve ["M # C"]) => false
+(m/fact
+  (solve ["M   C"])    => true
   (solve ["#######"
           "#     #"
           "#  #  #"
           "#M # C#"
-          "#######"]) => true
-  (solve ["########"
-          "#M  #  #"
-          "#   #  #"
-          "# # #  #"
-          "#   #  #"
-          "#  #   #"
-          "#  # # #"
-          "#  #   #"
-          "#  #  C#"
-          "########"]) => false
-  (solve ["M     "
-          "      "
-          "      "
-          "      "
-          "    ##"
-          "    #C"]) => false
+          "#######"])  => true
   (solve ["C######"
           " #     "
           " #   # "
           " #   #M"
-          "     # "]) => true
+          "     # "])  => true
   (solve ["C# # # #"
           "        "
           "# # # # "
@@ -135,3 +125,22 @@ Your function must return true iff the maze is solvable by the mouse."
           " # # # #"
           "        "
           "# # # #M"]) => true)
+
+(m/future-fact
+ (solve ["M # C"])    => false
+ (solve ["########"
+         "#M  #  #"
+         "#   #  #"
+         "# # #  #"
+         "#   #  #"
+         "#  #   #"
+         "#  # # #"
+         "#  #   #"
+         "#  #  C#"
+         "########"]) => false
+ (solve ["M     "
+         "      "
+         "      "
+         "      "
+         "    ##"
+         "    #C"])   => false)
