@@ -311,17 +311,15 @@ Your function must return true iff the maze is solvable by the mouse."
 (defn to-x?
   "Given a cell with coordinate [_ cx], is this possible to simply go to the [_ dx]?"
   [maze [_ cx :as c] [_ dx :as d]]
-  (if (= cx dx)
-    true
-    (let [r (range-x c d)
-          m (for [x r]
-              (map (comp #{\space \C \M} #(get-in % [x])) maze))]
-      (->> (for [x (-> m first count range)]
-             (map #(nth % x) m))
-           (map (comp (partial map (partial every? identity))
-                      (fn [v] (map (fn [& r] r) v (rest v)))))
-           (apply map (fn [& v] (some true? v)))
-           (every? true?)))))
+  (let [r (range-x c d)
+        m (for [x r]
+            (map (comp #{\space \C \M} #(get-in % [x])) maze))]
+    (->> (for [x (-> m first count range)]
+           (map #(nth % x) m))
+         (map (comp (partial map (partial every? identity))
+                    (fn [v] (map (fn [& r] r) v (rest v)))))
+         (apply map (fn [& v] (some true? v)))
+         (every? true?))))
 
 (m/fact
   (to-x? ["     "
