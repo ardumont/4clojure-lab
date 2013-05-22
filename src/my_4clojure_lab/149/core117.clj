@@ -89,7 +89,7 @@ Your function must return true iff the maze is solvable by the mouse."
   (rg 10 5)  => (range 5 11)
   (rg 10 10) => [])
 
-(defn to-y?
+(defn >y?
   "Given a cell with coordinate [cy _], is this possible to simply go to the [dy _]?"
   [maze [cy _ :as c] [dy _ :as d]]
   (let [r (rg cy dy)]
@@ -101,29 +101,29 @@ Your function must return true iff the maze is solvable by the mouse."
          (every? identity))))
 
 (m/fact
-  (to-y? ["M # C"] [0 0] [0 4]) => true
-  (to-y? ["     "
+  (>y? ["M # C"] [0 0] [0 4]) => true
+  (>y? ["     "
           "  #  "
           "M # C"] [2 0] [2 4]) => true
-  (to-y? [" M   "
+  (>y? [" M   "
           "  #  "
           "  # C"] [0 1] [2 4]) => true
-  (to-y? [" M   "
+  (>y? [" M   "
           "#####"
           "  # C"] [0 1] [2 4]) => false
-  (to-y? [" M   "
+  (>y? [" M   "
           "#### "
           "  # C"] [0 1] [2 4]) => true
-  (to-y? [" M   "
+  (>y? [" M   "
           "#####"
           "  # C"] [0 1] [2 4]) => false
-  (to-y? ["C######"
+  (>y? ["C######"
           " #     "
           " #   # "
           " #   #M"
           "     # "] [3 6] [0 0]) => true)
 
-(defn to-x?
+(defn >x?
   "Given a cell with coordinate [_ cx], is this possible to simply go to the [_ dx]?"
   [maze [_ cx :as c] [_ dx :as d]]
   (let [r (rg cx dx)
@@ -137,33 +137,33 @@ Your function must return true iff the maze is solvable by the mouse."
          (every? true?))))
 
 (m/fact
-  (to-x? ["     "
+  (>x? ["     "
           "  #  "
           "M # C"] [2 0] [2 4])   => true
-  (to-x? [" M   "
+  (>x? [" M   "
           "  #  "
           "  # C"] [0 1] [2 4])   => true
-  (to-x? [" M   "
+  (>x? [" M   "
           "#####"
           "  # C"] [0 1] [2 4])   => true
-  (to-x? [" M   "
+  (>x? [" M   "
           "#### "
           "  # C"] [0 1] [2 4])   => true
-  (to-x? [" M # "
+  (>x? [" M # "
           "## ##"
           "    C"] [0 1] [2 4])   => true
-  (to-x? ["C######"
+  (>x? ["C######"
           " #     "
           " #   # "
           " #   #M"
           "     # "] [3 6] [0 0]) => true)
 
 (m/fact
-  (to-x? ["M # C"] [0 0] [0 4])   => false
-  (to-x? [" M # "
+  (>x? ["M # C"] [0 0] [0 4])   => false
+  (>x? [" M # "
           "#####"
           "  # C"] [0 1] [2 4])   => false
-  (to-x? ["########"
+  (>x? ["########"
           "#M  #  #"
           "#   #  #"
           "# # #  #"
@@ -173,7 +173,7 @@ Your function must return true iff the maze is solvable by the mouse."
           "#  #   #"
           "#  #  C#"
           "########"] [1 0] [8 5]) => false
-  (to-x? ["M  #  "
+  (>x? ["M  #  "
           "   #  "
           " # #  "
           "   #  "
@@ -222,8 +222,8 @@ Your function must return true iff the maze is solvable by the mouse."
  (let [m (mouse mz)
        c (cheese mz)]
    (and (->> c (nxm mz) empty? not)
-        (to-x? mz m c)
-        (to-y? mz m c))))
+        (>x? mz m c)
+        (>y? mz m c))))
 
 (m/fact
   (solve ["M   C"])    => true
