@@ -16,69 +16,32 @@ Your function must return true iff the maze is solvable by the mouse."
 
 (defn p
   "Simple maze pretty printing"
-  [maze]
-  (->> maze
+  [m]
+  (->> m
        (map println)
        dorun))
 
-(defn nbs
-  "Compute the possible neighbours of a cell."
-  [maze [y x]]
-  (let [r (-> maze first count)
-        c (-> maze count)
-        x- (dec x)
-        x+ (inc x)
-        y- (dec y)
-        y+ (inc y)]
-    (->> [[y- x] [y+ x] [y x+] [y x-]] ;; N S E W
-         (filter (fn [[y x]] (and (<= 0 x) (<= 0 y) (< x r) (< y c)))))))
-
-(m/fact
-  (nbs [" M# C"
-        "     "] [0 0]) => (m/just [0 1] [1 0] :in-any-order)
-  (nbs [" M# C"
-        "     "] [1 1]) => (m/just [1 0] [1 2] [0 1] :in-any-order))
-
-(defn nxm
-  "Given a cell, compute the next possible move from such cell."
-  [maze [y x :as c]]
-  (let []
-    (->> c
-         (nbs maze)
-         (filter (comp #{\space \C} (partial get-in maze))))))
-
-(m/fact
-  (nxm [" M# C"] [0 1]) => [[0 0]]
-  (nxm ["M   C"] [0 0]) => [[0 1]]
-  (nxm ["M   C"
-        " #   "] [0 0]) => (m/just [1 0] [0 1] :in-any-order)
-  (nxm ["     "
-        "  #  "
-        " #M# "
-        "  # C"] [2 2]) => [])
-
-(defn get-character
+(defn character
   "Given a maze and a character, return its coordinates in the maze."
-  [maze character]
-  (let [r (-> maze first count)
-        c (-> maze count)]
+  [m s]
+  (let [r (-> m first count)
+        c (-> m count)]
     (first
      (for [x (range r)
            y (range c)
-           :when (= character (get-in maze [y x]))]
+           :when (= s (get-in m [y x]))]
        [y x]))))
 
 (m/fact
-  (get-character ["M   C"] \M)   => [0 0]
-  (get-character ["M   C"] \C)   => [0 4]
-  (get-character ["     "
-                  "  #  "
-                  "M # C"] \C)   => [2 4]
-  (get-character ["     "
-                  "  #  "
-                  "M # C"] \M)   => [2 0])
+  (character ["M   C"] \M)     => [0 0]
+  (character ["     "
+              "  #  "
+              "M # C"] \C) => [2 4]
+  (character ["     "
+              "  #  "
+              "M # C"] \M) => [2 0])
 
-(def mouse #(get-character % \M))
+(def mouse #(character % \M))
 
 (m/fact
   (mouse ["M   C"])   => [0 0]
@@ -96,7 +59,7 @@ Your function must return true iff the maze is solvable by the mouse."
           "  #  "
           "M # C"])   => [2 0])
 
-(def cheese #(get-character % \C))
+(def cheese #(character % \C))
 
 (m/fact
   (cheese ["M   C"])   => [0 4]
@@ -114,42 +77,28 @@ Your function must return true iff the maze is solvable by the mouse."
            "  #  "
            "M # C"])   => [2 4])
 
-(defn range-y
-  [[cy _] [dy _]]
-  (let [d (- dy cy)]
-    (cond (pos? d)  (->> dy inc (range cy))
-          (neg? d) (->> cy inc (range dy))
-          :else     [])))
+(defn rg
+  [x y]
+  (let [d (- x y)]
+    (cond (pos? d) (->> x inc (range y))
+          (neg? d) (->> y inc (range x))
+          :else    [])))
 
 (m/fact
-  (range-y [5 0] [10 0])  => (range 5 11)
-  (range-y [10 0] [5 0])  => (range 5 11)
-  (range-y [10 0] [10 0]) => [])
-
-(defn range-x
-  [[_ cx] [_ dx]]
-  (let [d (- dx cx)]
-    (cond (pos? d)  (->> dx inc (range cx))
-          (neg? d) (->> cx inc (range dx))
-          :else     [])))
-
-(m/fact
-  (range-x [0 5] [0 10])  => (range 5 11)
-  (range-x [0 10] [0 5])  => (range 5 11)
-  (range-x [0 10] [0 10]) => [])
+  (rg 5 10)  => (range 5 11)
+  (rg 10 5)  => (range 5 11)
+  (rg 10 10) => [])
 
 (defn to-y?
   "Given a cell with coordinate [cy _], is this possible to simply go to the [dy _]?"
   [maze [cy _ :as c] [dy _ :as d]]
-  (if (= cy dy)
-    true
-    (let [r (range-y c d)]
-      (->> r
-           (map (fn [v] (->> [v]
-                            (get-in maze)
-                            (filter #{\space \C \M})
-                            (some #{\space \C \M}))))
-           (every? identity)))))
+  (let [r (rg cy dy)]
+    (->> r
+         (map (fn [v] (->> [v]
+                          (get-in maze)
+                          (filter #{\space \C \M})
+                          (some #{\space \C \M}))))
+         (every? identity))))
 
 (m/fact
   (to-y? ["M # C"] [0 0] [0 4]) => true
@@ -177,7 +126,7 @@ Your function must return true iff the maze is solvable by the mouse."
 (defn to-x?
   "Given a cell with coordinate [_ cx], is this possible to simply go to the [_ dx]?"
   [maze [_ cx :as c] [_ dx :as d]]
-  (let [r (range-x c d)
+  (let [r (rg cx dx)
         m (for [x r]
             (map (comp #{\space \C \M} #(get-in % [x])) maze))]
     (->> (for [x (-> m first count range)]
@@ -233,13 +182,48 @@ Your function must return true iff the maze is solvable by the mouse."
           "  #   "
           "  #  C"] [0 0] [7 5]) => false)
 
+(defn nbs
+  "Compute the possible neighbours of a cell."
+  [maze [y x]]
+  (let [r (-> maze first count)
+        c (-> maze count)
+        x- (dec x)
+        x+ (inc x)
+        y- (dec y)
+        y+ (inc y)]
+    (->> [[y- x] [y+ x] [y x+] [y x-]] ;; N S E W
+         (filter (fn [[y x]] (and (<= 0 x) (<= 0 y) (< x r) (< y c)))))))
+
+(m/fact
+  (nbs [" M# C"
+        "     "] [0 0]) => (m/just [0 1] [1 0] :in-any-order)
+  (nbs [" M# C"
+        "     "] [1 1]) => (m/just [1 0] [1 2] [0 1] :in-any-order))
+
+(defn nxm
+  "Given a cell, compute the next possible move from such cell."
+  [maze [y x :as c]]
+  (->> c
+       (nbs maze)
+       (filter (comp #{\space \C} (partial get-in maze)))))
+
+(m/fact
+  (nxm [" M# C"] [0 1]) => [[0 0]]
+  (nxm ["M   C"] [0 0]) => [[0 1]]
+  (nxm ["M   C"
+        " #   "] [0 0]) => (m/just [1 0] [0 1] :in-any-order)
+  (nxm ["     "
+        "  #  "
+        " #M# "
+        "  # C"] [2 2]) => [])
+
 (defn solve
-  [mz]
-  (let [m (mouse mz)
-        c (cheese mz)]
-    (and (->> c (nxm mz) empty? not)
-         (to-x? mz m c)
-         (to-y? mz m c))))
+ [mz]
+ (let [m (mouse mz)
+       c (cheese mz)]
+   (and (->> c (nxm mz) empty? not)
+        (to-x? mz m c)
+        (to-y? mz m c))))
 
 (m/fact
   (solve ["M   C"])    => true
