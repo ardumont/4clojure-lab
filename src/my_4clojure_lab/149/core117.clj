@@ -315,16 +315,13 @@ Your function must return true iff the maze is solvable by the mouse."
     true
     (let [r (range-x (mouse maze) (cheese maze))
           m (for [x r]
-              (map (comp #{\space \C \M} #(get-in % [x])) maze))
-          mm (->> (for [x (-> m first count range)]
-                    (map #(nth % x) m))
-                  (map (partial partition 2))
-                  (map (partial map (partial every? identity))))]
-      (->> mm
-           identity
-           (map (partial every? true?))
-           (some true?)
-           true?))))
+              (map (comp #{\space \C \M} #(get-in % [x])) maze))]
+      (->> (for [x (-> m first count range)]
+             (map #(nth % x) m))
+           (map (partial partition 2))
+           (map (partial map (partial every? identity)))
+           (apply map (fn [& v] (some true? v)))
+           (every? true?)))))
 
 (m/fact
   (to-x? ["     "
