@@ -313,14 +313,13 @@ Your function must return true iff the maze is solvable by the mouse."
   [maze [_ cx :as c] [_ dx :as d]]
   (if (= cx dx)
     true
-    (let [r (range-x (mouse maze) (cheese maze))
+    (let [r (range-x c d)
           m (for [x r]
               (map (comp #{\space \C \M} #(get-in % [x])) maze))]
       (->> (for [x (-> m first count range)]
              (map #(nth % x) m))
-           identity
-           (map (fn [v] (map (fn [& r] r) v (rest v))))
-           (map (partial map (partial every? identity)))
+           (map (comp (partial map (partial every? identity))
+                      (fn [v] (map (fn [& r] r) v (rest v)))))
            (apply map (fn [& v] (some true? v)))
            (every? true?)))))
 
