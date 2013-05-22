@@ -138,140 +138,6 @@ Your function must return true iff the maze is solvable by the mouse."
   (range-x [0 10] [0 5])  => (range 5 11)
   (range-x [0 10] [0 10]) => [])
 
-(defn cleanup-fr
-  "Cleanup the first row if all first row begin with #"
-  [maze]
-  (if (->> maze
-           (map first)
-           (every? #{\#}))
-    (->> maze
-         (map (comp (partial clojure.string/join "") (partial drop 1))))
-    maze))
-
-(m/fact
-  (cleanup-fr ["#######"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["######"
-                               "     #"
-                               "  #  #"
-                               "M # C#"
-                               "######"]
-  (cleanup-fr ["###  ##"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["##  ##"
-                               "     #"
-                               "  #  #"
-                               "M # C#"
-                               "######"])
-
-(defn cleanup-lr
-  "Cleanup the first row if all first row begin with #"
-  [maze]
-  (if (->> maze
-           (map last)
-           (every? #{\#}))
-    (->> maze
-         (map (comp (partial clojure.string/join "") drop-last)))
-    maze))
-
-(m/fact
-  (cleanup-lr ["#######"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["######"
-                               "#     "
-                               "#  #  "
-                               "#M # C"
-                               "######"]
-  (cleanup-lr ["###  ##"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["###  #"
-                               "#     "
-                               "#  #  "
-                               "#M # C"
-                               "######"])
-
-(defn cleanup-fc
-  [maze]
-  (if (->> maze
-           first
-           (every? #{\#}))
-    (drop 1 maze)
-    maze))
-
-(m/fact
-  (cleanup-fc ["#######"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["#     #"
-                               "#  #  #"
-                               "#M # C#"
-                               "#######"]
-  (cleanup-fc ["###  ##"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["###  ##"
-                               "#     #"
-                               "#  #  #"
-                               "#M # C#"
-                               "#######"])
-
-(defn cleanup-lc
-  [maze]
-  (if (->> maze
-           last
-           (every? #{\#}))
-    (drop-last maze)
-    maze))
-
-(m/fact
-  (cleanup-lc ["#######"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "#######"]) => ["#######"
-                               "#     #"
-                               "#  #  #"
-                               "#M # C#"]
-  (cleanup-lc ["###  ##"
-               "#     #"
-               "#  #  #"
-               "#M # C#"
-               "###  ##"]) => ["###  ##"
-                               "#     #"
-                               "#  #  #"
-                               "#M # C#"
-                               "###  ##"])
-(defn cleanup
-  "Cleanup the useless wall all around the maze to simplify the other computations."
-  [maze]
-  (->> maze cleanup-lc cleanup-lr cleanup-fc cleanup-fr vec))
-
-(m/fact
-  (cleanup ["########"
-            "#      #"
-            "#   #  #"
-            "#M # C##"
-            "########"]) => ["      "
-                             "   #  "
-                             "M # C#"]
-  (cleanup ["#######"
-            "#  #  #"
-            "#  #  #"
-            "#M # C#"
-            "#######"]) => ["  #  "
-                            "  #  "
-                            "M # C"])
-
 (defn to-y?
   "Given a cell with coordinate [cy _], is this possible to simply go to the [dy _]?"
   [maze [cy _ :as c] [dy _ :as d]]
@@ -368,9 +234,8 @@ Your function must return true iff the maze is solvable by the mouse."
           "  #  C"] [0 0] [7 5]) => false)
 
 (defn solve
-  [maze]
-  (let [mz (cleanup maze)
-        m (mouse mz)
+  [mz]
+  (let [m (mouse mz)
         c (cheese mz)]
     (and (->> c (nxm mz) empty? not)
          (to-x? mz m c)
