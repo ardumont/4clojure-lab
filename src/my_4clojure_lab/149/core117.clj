@@ -103,25 +103,25 @@ Your function must return true iff the maze is solvable by the mouse."
 (m/fact
   (>y? ["M # C"] [0 0] [0 4]) => true
   (>y? ["     "
-          "  #  "
-          "M # C"] [2 0] [2 4]) => true
+        "  #  "
+        "M # C"] [2 0] [2 4]) => true
   (>y? [" M   "
-          "  #  "
-          "  # C"] [0 1] [2 4]) => true
+        "  #  "
+        "  # C"] [0 1] [2 4]) => true
   (>y? [" M   "
-          "#####"
-          "  # C"] [0 1] [2 4]) => false
+        "#####"
+        "  # C"] [0 1] [2 4]) => false
   (>y? [" M   "
-          "#### "
-          "  # C"] [0 1] [2 4]) => true
+        "#### "
+        "  # C"] [0 1] [2 4]) => true
   (>y? [" M   "
-          "#####"
-          "  # C"] [0 1] [2 4]) => false
+        "#####"
+        "  # C"] [0 1] [2 4]) => false
   (>y? ["C######"
-          " #     "
-          " #   # "
-          " #   #M"
-          "     # "] [3 6] [0 0]) => true)
+        " #     "
+        " #   # "
+        " #   #M"
+        "     # "] [3 6] [0 0]) => true)
 
 (defn >x?
   "Given a cell with coordinate [_ cx], is this possible to simply go to the [_ dx]?"
@@ -138,55 +138,55 @@ Your function must return true iff the maze is solvable by the mouse."
 
 (m/fact
   (>x? ["     "
-          "  #  "
-          "M # C"] [2 0] [2 4])   => true
+        "  #  "
+        "M # C"] [2 0] [2 4])   => true
   (>x? [" M   "
-          "  #  "
-          "  # C"] [0 1] [2 4])   => true
+        "  #  "
+        "  # C"] [0 1] [2 4])   => true
   (>x? [" M   "
-          "#####"
-          "  # C"] [0 1] [2 4])   => true
+        "#####"
+        "  # C"] [0 1] [2 4])   => true
   (>x? [" M   "
-          "#### "
-          "  # C"] [0 1] [2 4])   => true
+        "#### "
+        "  # C"] [0 1] [2 4])   => true
   (>x? [" M # "
-          "## ##"
-          "    C"] [0 1] [2 4])   => true
+        "## ##"
+        "    C"] [0 1] [2 4])   => true
   (>x? ["C######"
-          " #     "
-          " #   # "
-          " #   #M"
-          "     # "] [3 6] [0 0]) => true)
+        " #     "
+        " #   # "
+        " #   #M"
+        "     # "] [3 6] [0 0]) => true)
 
 (m/fact
   (>x? ["M # C"] [0 0] [0 4])   => false
   (>x? [" M # "
-          "#####"
-          "  # C"] [0 1] [2 4])   => false
+        "#####"
+        "  # C"] [0 1] [2 4])   => false
   (>x? ["########"
-          "#M  #  #"
-          "#   #  #"
-          "# # #  #"
-          "#   #  #"
-          "#  #   #"
-          "#  # # #"
-          "#  #   #"
-          "#  #  C#"
-          "########"] [1 0] [8 5]) => false
+        "#M  #  #"
+        "#   #  #"
+        "# # #  #"
+        "#   #  #"
+        "#  #   #"
+        "#  # # #"
+        "#  #   #"
+        "#  #  C#"
+        "########"] [1 0] [8 5]) => false
   (>x? ["M  #  "
-          "   #  "
-          " # #  "
-          "   #  "
-          "  #   "
-          "  # # "
-          "  #   "
-          "  #  C"] [0 0] [7 5]) => false)
+        "   #  "
+        " # #  "
+        "   #  "
+        "  #   "
+        "  # # "
+        "  #   "
+        "  #  C"] [0 0] [7 5]) => false)
 
 (defn nbs
   "Compute the possible neighbours of a cell."
-  [maze [y x]]
-  (let [r (-> maze first count)
-        c (-> maze count)
+  [m [y x]]
+  (let [r (-> m first count)
+        c (-> m count)
         x- (dec x)
         x+ (inc x)
         y- (dec y)
@@ -202,10 +202,10 @@ Your function must return true iff the maze is solvable by the mouse."
 
 (defn nxm
   "Given a cell, compute the next possible move from such cell."
-  [maze [y x :as c]]
+  [m [y x :as c]]
   (->> c
-       (nbs maze)
-       (filter (comp #{\space \C} (partial get-in maze)))))
+       (nbs m)
+       (filter (comp #{\space \C} (partial get-in m)))))
 
 (m/fact
   (nxm [" M# C"] [0 1]) => [[0 0]]
@@ -217,7 +217,7 @@ Your function must return true iff the maze is solvable by the mouse."
         " #M# "
         "  # C"] [2 2]) => [])
 
-(defn solve
+(defn solve?
  [mz]
  (let [m (mouse mz)
        c (cheese mz)]
@@ -226,40 +226,42 @@ Your function must return true iff the maze is solvable by the mouse."
         (>y? mz m c))))
 
 (m/fact
-  (solve ["M   C"])    => true
-  (solve ["#######"
-          "#     #"
-          "#  #  #"
-          "#M # C#"
-          "#######"])  => true
-  (solve ["C######"
-          " #     "
-          " #   # "
-          " #   #M"
-          "     # "])  => true
-  (solve ["C# # # #"
-          "        "
-          "# # # # "
-          "        "
-          " # # # #"
-          "        "
-          "# # # #M"]) => true)
+  (solve? ["M   C"])    => true
+  (solve? ["#######"
+           "#     #"
+           "#  #  #"
+           "#M # C#"
+           "#######"])  => true
+  (solve? ["C######"
+           " #     "
+           " #   # "
+           " #   #M"
+           "     # "])  => true
+  (solve? ["C# # # #"
+           "        "
+           "# # # # "
+           "        "
+           " # # # #"
+           "        "
+           "# # # #M"]) => true)
 
 (m/fact
- (solve ["M # C"])    => false
- (solve ["########"
-         "#M  #  #"
-         "#   #  #"
-         "# # #  #"
-         "#   #  #"
-         "#  #   #"
-         "#  # # #"
-         "#  #   #"
-         "#  #  C#"
-         "########"]) => false
- (solve ["M     "
-         "      "
-         "      "
-         "      "
-         "    ##"
-         "    #C"])   => false)
+  (solve? ["M # C"])    => false
+  (solve? ["########"
+           "#M  #  #"
+           "#   #  #"
+           "# # #  #"
+           "#   #  #"
+           "#  #   #"
+           "#  # # #"
+           "#  #   #"
+           "#  #  C#"
+           "########"]) => false
+  (solve? ["M     "
+           "      "
+           "      "
+           "      "
+           "    ##"
+           "    #C"])   => false)
+
+;;
