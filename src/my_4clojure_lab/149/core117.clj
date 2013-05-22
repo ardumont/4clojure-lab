@@ -318,7 +318,8 @@ Your function must return true iff the maze is solvable by the mouse."
               (map (comp #{\space \C \M} #(get-in % [x])) maze))]
       (->> (for [x (-> m first count range)]
              (map #(nth % x) m))
-           (map (partial partition 2))
+           identity
+           (map (fn [v] (map (fn [& r] r) v (rest v))))
            (map (partial map (partial every? identity)))
            (apply map (fn [& v] (some true? v)))
            (every? true?)))))
