@@ -143,7 +143,7 @@ Your function must return true iff the maze is solvable by the mouse."
   [maze [cy _ :as c] [dy _ :as d]]
   (if (= cy dy)
     true
-    (let [r (range-y (mouse maze) (cheese maze))]
+    (let [r (range-y c d)]
       (->> r
            (map (fn [v] (->> [v]
                             (get-in maze)
