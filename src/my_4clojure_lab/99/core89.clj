@@ -21,14 +21,14 @@
 (defn graph
   [])
 
-(fact (graph [[:a :b]])                                                                                 => true)
+(future-fact (graph [[:a :b]])                                                                                 => true)
 
-(fact (graph [[:a :a] [:b :b]])                                                                         => false)
+(future-fact (graph [[:a :a] [:b :b]])                                                                         => false)
 
-(fact (graph [[:a :b] [:a :b] [:a :c] [:c :a] [:a :d] [:b :d] [:c :d]])                                 => false)
+(future-fact (graph [[:a :b] [:a :b] [:a :c] [:c :a] [:a :d] [:b :d] [:c :d]])                                 => false)
 
-(fact (graph [[1 2] [2 3] [3 4] [4 1]])                                                                 => true)
+(future-fact (graph [[1 2] [2 3] [3 4] [4 1]])                                                                 => true)
 
-(fact (graph [[:a :b] [:a :c] [:c :b] [:a :e] [:b :e] [:a :d] [:b :d] [:c :e] [:d :e] [:c :f] [:d :f]]) => true)
+(future-fact (graph [[:a :b] [:a :c] [:c :b] [:a :e] [:b :e] [:a :d] [:b :d] [:c :e] [:d :e] [:c :f] [:d :f]]) => true)
 
-(fact (graph [[1 2] [2 3] [2 4] [2 5]])                                                                 => false)
+(future-fact (graph [[1 2] [2 3] [2 4] [2 5]])                                                                 => false)
