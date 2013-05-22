@@ -264,4 +264,92 @@ Your function must return true iff the maze is solvable by the mouse."
            "    ##"
            "    #C"])   => false)
 
-;;
+;; for 4clojure
+
+(def s? (fn [mz]
+          (let [ch (fn [m s]
+                     (let [r (-> m first count)
+                           c (-> m count)]
+                       (first
+                        (for [x (range r)
+                              y (range c)
+                              :when (= s (get-in m [y x]))]
+                          [y x]))))
+                nbs (fn [m [y x]]
+                      (let [r (-> m first count)
+                            c (-> m count)
+                            x- (dec x)
+                            x+ (inc x)
+                            y- (dec y)
+                            y+ (inc y)]
+                        (->> [[y- x] [y+ x] [y x+] [y x-]] ;; N S E W
+                             (filter (fn [[y x]] (and (<= 0 x) (<= 0 y) (< x r) (< y c)))))))
+                rg (fn [x y]
+                     (let [d (- x y)]
+                       (cond (pos? d) (->> x inc (range y))
+                             (neg? d) (->> y inc (range x))
+                             :else    [])))
+                >x? (fn [mz [_ cx :as c] [_ dx :as d]]
+                      (let [r (rg cx dx)
+                            m (for [x r]
+                                (map (comp #{\space \C \M} #(get-in % [x])) mz))]
+                        (->> (for [x (-> m first count range)]
+                               (map #(nth % x) m))
+                             (map (comp (partial map (partial every? identity))
+                                        (fn [v] (map (fn [& r] r) v (rest v)))))
+                             (apply map (fn [& v] (some true? v)))
+                             (every? true?))))
+                >y? (fn [mz [cy _ :as c] [dy _ :as d]]
+                      (let [r (rg cy dy)]
+                        (->> r
+                             (map (fn [v] (->> [v]
+                                              (get-in mz)
+                                              (filter #{\space \C \M})
+                                              (some #{\space \C \M}))))
+                             (every? identity))))
+                nxm (fn [m [y x :as c]]
+                      (->> c
+                           (nbs m)
+                           (filter (comp #{\space \C} (partial get-in m)))))
+                ms (ch mz \M)
+                c (ch mz \C)]
+            (and (->> c (nxm mz) empty? not)
+                 (>x? mz ms c)
+                 (>y? mz ms c)))))
+
+(m/fact
+  (s? ["M   C"])    => true
+  (s? ["#######"
+       "#     #"
+       "#  #  #"
+       "#M # C#"
+       "#######"])  => true
+  (s? ["C######"
+       " #     "
+       " #   # "
+       " #   #M"
+       "     # "])  => true
+  (s? ["C# # # #"
+       "        "
+       "# # # # "
+       "        "
+       " # # # #"
+       "        "
+       "# # # #M"]) => true
+  (s? ["M # C"])    => false
+  (s? ["########"
+       "#M  #  #"
+       "#   #  #"
+       "# # #  #"
+       "#   #  #"
+       "#  #   #"
+       "#  # # #"
+       "#  #   #"
+       "#  #  C#"
+       "########"]) => false
+  (s? ["M     "
+       "      "
+       "      "
+       "      "
+       "    ##"
+       "    #C"])   => false)
