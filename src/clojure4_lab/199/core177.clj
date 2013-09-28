@@ -13,16 +13,13 @@
 ;; Write a function that takes in a string and returns truthy if all square [ ] round ( ) and curly { } brackets are properly paired and legally nested, or returns falsey otherwise.
 
 (defn bb [s]
-  (let [map-symbols {\) \(
-                     \} \{
-                     \] \[}]
+  (let [ms {\) \( \} \{ \] \[}]
     (loop [[h & t :as l]  s
            [c & r :as st] []]
       (if l
         (cond (#{\( \{ \[} h) (recur t (cons h st))
-              (#{\) \} \]} h) (let [so (get map-symbols h)]
-                                (if (not= c so) false (recur t r)))
-              :else (recur t st))
+              (#{\) \} \]} h) (if (->> h (get ms) (not= c)) nil (recur t r))
+              :else           (recur t st))
         (empty? st)))))
 
 (fact (bb "This string has no brackets.") => truthy)
