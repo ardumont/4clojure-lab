@@ -17,18 +17,19 @@
                      \} \{
                      \] \[}
         inc-cnt (fn [m s] (update-in m [s] + 1))]
-    (loop [acc         {\( 0 \) 0
-                        \{ 0 \} 0
-                        \[ 0 \] 0}
-           [h & t :as l] s]
+    (loop [acc            {\( 0 \) 0
+                           \{ 0 \} 0
+                           \[ 0 \] 0}
+           [h & t :as l]  s
+           [c & r :as st] []]
       (if l
-        (cond (#{\( \{ \[} h) (recur (inc-cnt acc h) t)
+        (cond (#{\( \{ \[} h) (recur (inc-cnt acc h) t (cons h st))
               (#{\) \} \]} h) (let [sc (get acc h)
                                     so (->> h
                                             (get map-symbols)
                                             (get acc))]
-                                (if (< so (inc sc)) false (recur (inc-cnt acc h) t)))
-              :else (recur acc t))
+                                (if (or (not= c so) (< so (inc sc))) false (recur (inc-cnt acc h) t r)))
+              :else (recur acc t st))
         (->> [[\{ \}]
               [\( \)]
               [\[ \]]]
