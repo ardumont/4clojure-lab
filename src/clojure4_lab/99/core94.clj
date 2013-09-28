@@ -90,7 +90,7 @@
                     (for [y (range l) x (range c)]
                       (ngc b [y x]))))))
 
-(fact "IT test 0"
+(future-fact "Game of life - 94 - IT test 0"
   (gol ["      "
         " ##   "
         " ##   "
@@ -102,7 +102,8 @@
                        "    # "
                        "   ## "
                        "      "])
-(fact "IT test 1."
+
+(future-fact "Game of life - 94 - IT test 1."
   (gol ["     "
         "     "
         " ### "
@@ -113,7 +114,7 @@
                        "  #  "
                        "     "])
 
-(fact "IT test 2"
+(future-fact "Game of life - 94 - IT test 2"
   (gol ["      "
         "      "
         "  ### "
